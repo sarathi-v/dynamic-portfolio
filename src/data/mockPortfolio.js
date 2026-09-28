@@ -24,7 +24,13 @@ const mockPortfolio = {
       title: "E-Commerce Website",
       description: "An online shopping website."
     }
-  ]
+  ],
+
+    socialLinks: {
+    github: "https://github.com/",
+    linkedin: "https://linkedin.com/"
+  }
+
 };
 
 export default mockPortfolio;
