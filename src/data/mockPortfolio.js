@@ -1,6 +1,9 @@
 const mockPortfolio = {
-  name: "Mohamed Rafeek",
+  name: "Sarathi",
   role: "Full Stack Developer",
+
+  profileImage:
+    "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde",
 
   about:
     "I am a passionate developer who loves building web applications.",

@@ -1,6 +1,14 @@
 function ModernTemplate({ portfolio }) {
   return (
     <div className="min-h-screen p-10">
+
+      <img
+  src={portfolio.profileImage}
+  alt={portfolio.name}
+  className="mb-4 h-24 w-24 rounded-full object-cover"
+/>
+
+
       <h1 className="text-4xl font-bold">
         {portfolio.name}
       </h1>
