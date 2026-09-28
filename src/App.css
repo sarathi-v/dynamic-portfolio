@@ -1,8 +1,29 @@
+/* =========================
+   GENERAL
+========================= */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: #222;
+  background: #f8f9fc;
+}
+
+
+/* =========================
+   NAVBAR
+========================= */
+
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 20px 60px;
+  background: white;
   border-bottom: 1px solid #ddd;
 }
 
@@ -18,4 +39,411 @@
 .nav-links a {
   text-decoration: none;
   color: #222;
+}
+
+
+/* =========================
+   HERO
+========================= */
+
+.hero {
+  text-align: center;
+  padding: 100px 20px;
+  background: white;
+}
+
+.hero h1 {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.hero p {
+  font-size: 20px;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.primary-button {
+  padding: 14px 28px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+
+/* =========================
+   TEMPLATES
+========================= */
+
+.templates {
+  padding: 80px 60px;
+  text-align: center;
+}
+
+.templates h2 {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.templates-subtitle {
+  color: #666;
+  margin-bottom: 45px;
+}
+
+.template-cards {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+
+/* =========================
+   TEMPLATE CARD
+========================= */
+
+.template-card {
+  width: 320px;
+  padding: 20px;
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #ddd;
+  text-align: left;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.template-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+}
+
+.template-card h3 {
+  font-size: 25px;
+  margin: 20px 0 10px;
+}
+
+.template-card p {
+  color: #666;
+  line-height: 1.6;
+  min-height: 50px;
+}
+
+
+/* =========================
+   TEMPLATE PREVIEW
+========================= */
+
+.template-preview {
+  height: 220px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  padding: 25px;
+}
+
+
+/* =========================
+   MODERN
+========================= */
+
+.modern .template-preview {
+  background: #eef2ff;
+}
+
+.preview-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.preview-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #6366f1;
+}
+
+.preview-line {
+  height: 8px;
+  border-radius: 10px;
+  background: #c7c9d9;
+  margin-bottom: 8px;
+}
+
+.preview-line.large {
+  width: 120px;
+}
+
+.preview-line.medium {
+  width: 90px;
+}
+
+.preview-line.small {
+  width: 60px;
+}
+
+.preview-content {
+  margin-top: 30px;
+}
+
+.preview-boxes {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.preview-boxes div {
+  width: 90px;
+  height: 60px;
+  border-radius: 8px;
+  background: #818cf8;
+}
+
+
+/* =========================
+   CREATIVE
+========================= */
+
+.creative .template-preview {
+  background: #fff0f6;
+}
+
+.creative-shape {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.shape-one {
+  width: 120px;
+  height: 120px;
+  top: -30px;
+  right: -20px;
+  background: #f472b6;
+}
+
+.shape-two {
+  width: 80px;
+  height: 80px;
+  bottom: -20px;
+  left: -15px;
+  background: #a78bfa;
+}
+
+.creative h4 {
+  position: relative;
+  z-index: 2;
+  font-size: 28px;
+  margin: 20px 0 35px;
+  letter-spacing: 3px;
+}
+
+.creative-preview-text {
+  position: relative;
+  z-index: 2;
+}
+
+
+/* =========================
+   MINIMAL
+========================= */
+
+.minimal .template-preview {
+  background: #f5f5f5;
+}
+
+.minimal-title {
+  width: 150px;
+  height: 15px;
+  background: #333;
+  margin-bottom: 15px;
+}
+
+.minimal-section {
+  margin-top: 50px;
+}
+
+
+/* =========================
+   BUTTON
+========================= */
+
+.template-button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 20px;
+  }
+
+  .nav-links {
+    gap: 12px;
+  }
+
+  .hero h1 {
+    font-size: 36px;
+  }
+
+  .templates {
+    padding: 60px 20px;
+  }
+
+  .template-card {
+    width: 100%;
+    max-width: 350px;
+  }
+}
+/* =========================
+   CREATE PORTFOLIO PAGE
+========================= */
+
+.create-page {
+  min-height: calc(100vh - 80px);
+  padding: 70px 20px;
+  background: #f8f9fc;
+}
+
+.create-container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  border: 1px solid #ddd;
+}
+
+.create-container h1 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.create-subtitle {
+  text-align: center;
+  color: #666;
+  margin-bottom: 35px;
+}
+
+.portfolio-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 13px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-family: inherit;
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #666;
+}
+
+.save-button {
+  padding: 14px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+@media (max-width: 600px) {
+  .create-container {
+    padding: 25px;
+  }
+}
+/* =========================
+   FORM BUTTONS
+========================= */
+
+.form-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.back-button {
+  flex: 1;
+  padding: 14px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  background: white;
+}
+
+.form-buttons .save-button {
+  flex: 2;
+}
+/* =========================
+   PROJECT FORM
+========================= */
+
+.project-form-card {
+  padding: 25px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fafafa;
+}
+
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.project-header h3 {
+  margin: 0;
+}
+
+.remove-project {
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.add-project-button {
+  padding: 13px;
+  border: 1px dashed #aaa;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.add-project-button:hover {
+  background: #f5f5f5;
 }
