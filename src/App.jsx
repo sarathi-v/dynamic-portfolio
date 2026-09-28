@@ -1,10 +1,11 @@
-import ModernTemplate from "./templates/Modern/ModernTemplate";
+import { templates } from "./templates";
 import mockPortfolio from "./data/mockPortfolio";
 
 function App() {
-  return (
-    <ModernTemplate portfolio={mockPortfolio} />
-  );
+  const selectedTemplate = "modern";
+  const SelectedTemplate = templates[selectedTemplate];
+
+  return <SelectedTemplate portfolio={mockPortfolio} />;
 }
 
 export default App;
