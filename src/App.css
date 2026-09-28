@@ -447,3 +447,662 @@ body {
 .add-project-button:hover {
   background: #f5f5f5;
 }
+/* =========================
+   PORTFOLIO PREVIEW
+========================= */
+
+.portfolio-preview-page {
+  min-height: calc(100vh - 80px);
+  padding: 60px 20px;
+  background: #f8f9fc;
+}
+
+.portfolio-preview-container {
+  max-width: 900px;
+  margin: 0 auto;
+  background: white;
+  padding: 50px;
+  border-radius: 16px;
+  border: 1px solid #ddd;
+}
+
+
+/* =========================
+   PREVIEW TOP BAR
+========================= */
+
+.preview-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.preview-topbar h1 {
+  margin: 0;
+}
+
+.edit-button {
+  padding: 12px 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.edit-button:hover {
+  background: #f5f5f5;
+}
+
+
+/* =========================
+   PROFILE
+========================= */
+
+.portfolio-profile {
+  text-align: center;
+  padding: 40px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.portfolio-profile h2 {
+  font-size: 42px;
+  margin: 0 0 10px;
+}
+
+.portfolio-profile h3 {
+  font-size: 22px;
+  font-weight: normal;
+  color: #666;
+  margin: 0 0 15px;
+}
+
+.portfolio-profile p {
+  color: #666;
+}
+
+
+/* =========================
+   SOCIAL LINKS
+========================= */
+
+.social-links {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.social-links a {
+  color: #333;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.social-links a:hover {
+  text-decoration: underline;
+}
+
+
+/* =========================
+   PORTFOLIO SECTIONS
+========================= */
+
+.portfolio-section {
+  padding: 40px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.portfolio-section:last-child {
+  border-bottom: none;
+}
+
+.portfolio-section h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.portfolio-section p {
+  color: #555;
+  line-height: 1.7;
+}
+
+
+/* =========================
+   SKILLS
+========================= */
+
+.skill-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.skill-tag {
+  padding: 8px 15px;
+  background: #f1f1f1;
+  border-radius: 20px;
+  font-size: 14px;
+}
+
+
+/* =========================
+   PROJECTS
+========================= */
+
+.portfolio-projects {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.portfolio-project-card {
+  padding: 25px;
+  background: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+}
+
+.portfolio-project-card h3 {
+  margin-top: 0;
+  font-size: 21px;
+}
+
+.portfolio-project-card a {
+  display: inline-block;
+  margin-top: 10px;
+  color: #333;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.portfolio-project-card a:hover {
+  text-decoration: underline;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 700px) {
+  .portfolio-preview-container {
+    padding: 30px 20px;
+  }
+
+  .preview-topbar {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .preview-topbar h1 {
+    text-align: center;
+  }
+
+  .portfolio-profile h2 {
+    font-size: 32px;
+  }
+
+  .portfolio-projects {
+    grid-template-columns: 1fr;
+  }
+}
+/* =========================
+   SELECTED TEMPLATE
+========================= */
+
+.selected-template-box {
+  padding: 12px 15px;
+  margin-bottom: 25px;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  text-align: center;
+  text-transform: capitalize;
+}
+
+
+/* =========================
+   TEMPLATE BUTTON LINK
+========================= */
+
+.template-button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  text-align: center;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+
+/* =========================
+   SELECTED TEMPLATE NAME
+========================= */
+
+.selected-template {
+  display: inline-block;
+  padding: 6px 12px;
+  margin-bottom: 15px;
+  border-radius: 20px;
+  background: #f1f1f1;
+  font-size: 14px;
+  text-transform: capitalize;
+}
+
+
+/* =========================
+   MODERN PORTFOLIO
+========================= */
+
+.modern-portfolio .portfolio-profile {
+  background: #eef2ff;
+  border-radius: 12px;
+}
+
+
+/* =========================
+   CREATIVE PORTFOLIO
+========================= */
+
+.creative-portfolio .portfolio-profile {
+  background: #fff0f6;
+  border-radius: 12px;
+}
+
+.creative-portfolio .portfolio-preview-container {
+  border-radius: 24px;
+}
+
+
+/* =========================
+   MINIMAL PORTFOLIO
+========================= */
+
+.minimal-portfolio .portfolio-profile {
+  background: #f5f5f5;
+  border-radius: 0;
+}
+
+.minimal-portfolio .portfolio-preview-container {
+  border-radius: 4px;
+}
+/* =========================
+   TEMPLATE PREVIEW STYLES
+========================= */
+
+.template-label {
+  font-size: 13px;
+  letter-spacing: 3px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+
+/* =========================
+   MODERN TEMPLATE
+========================= */
+
+.modern-template {
+  font-family: Arial, sans-serif;
+}
+
+.modern-hero {
+  text-align: center;
+  padding: 60px 30px;
+  background: #eef2ff;
+  border-radius: 20px;
+}
+
+.modern-avatar {
+  width: 90px;
+  height: 90px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: #6366f1;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  font-weight: bold;
+}
+
+.modern-hero h1 {
+  font-size: 48px;
+  margin: 10px 0;
+}
+
+.modern-hero h2 {
+  color: #666;
+  font-weight: normal;
+}
+
+.modern-section {
+  padding: 45px 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.modern-section h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.modern-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.modern-skills span {
+  padding: 9px 16px;
+  border-radius: 20px;
+  background: #eef2ff;
+  color: #4f46e5;
+  font-weight: bold;
+}
+
+.modern-projects {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.modern-project-card {
+  padding: 25px;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+}
+
+.modern-project-card > span {
+  color: #6366f1;
+  font-weight: bold;
+}
+
+.modern-project-card h3 {
+  font-size: 21px;
+}
+
+.modern-project-card a {
+  color: #4f46e5;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+
+/* =========================
+   CREATIVE TEMPLATE
+========================= */
+
+.creative-template {
+  font-family: Arial, sans-serif;
+}
+
+.creative-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 80px 40px;
+  border-radius: 25px;
+  background: #fff0f6;
+}
+
+.creative-hero h1 {
+  position: relative;
+  z-index: 2;
+  font-size: 52px;
+  margin: 10px 0;
+}
+
+.creative-hero h1 span {
+  color: #e11d8d;
+}
+
+.creative-hero h2 {
+  position: relative;
+  z-index: 2;
+  color: #7c3aed;
+}
+
+.creative-circle {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: #f472b6;
+  right: -70px;
+  top: -80px;
+}
+
+.creative-circle-two {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: #a78bfa;
+  left: -50px;
+  bottom: -50px;
+}
+
+.creative-section {
+  padding: 45px 10px;
+  border-bottom: 2px solid #f3d4e5;
+}
+
+.creative-section h2 {
+  font-size: 30px;
+  color: #7c3aed;
+}
+
+.creative-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.creative-skills span {
+  padding: 10px 18px;
+  border-radius: 30px;
+  background: #fce7f3;
+  border: 2px solid #f472b6;
+}
+
+.creative-projects {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.creative-project-card {
+  position: relative;
+  padding: 30px;
+  border-radius: 20px;
+  background: #faf5ff;
+  border: 2px solid #e9d5ff;
+}
+
+.creative-project-number {
+  font-size: 35px;
+  font-weight: bold;
+  color: #c084fc;
+}
+
+.creative-project-card a {
+  color: #db2777;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+
+/* =========================
+   MINIMAL TEMPLATE
+========================= */
+
+.minimal-template {
+  font-family: Georgia, serif;
+  color: #222;
+}
+
+.minimal-hero {
+  padding: 70px 10px;
+  border-bottom: 2px solid #222;
+}
+
+.minimal-hero h1 {
+  font-size: 56px;
+  font-weight: normal;
+  margin: 10px 0;
+}
+
+.minimal-hero h2 {
+  font-size: 22px;
+  font-weight: normal;
+  color: #666;
+}
+
+.minimal-section {
+  padding: 45px 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.minimal-section h2 {
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+
+.minimal-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.minimal-skills span {
+  padding: 6px 12px;
+  border: 1px solid #999;
+  font-size: 14px;
+}
+
+.minimal-project {
+  padding: 25px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.minimal-project:last-child {
+  border-bottom: none;
+}
+
+.minimal-project h3 {
+  font-size: 24px;
+  font-weight: normal;
+}
+
+.minimal-project a {
+  color: #222;
+  text-decoration: underline;
+}
+
+
+/* =========================
+   PREVIEW ACTION
+========================= */
+
+.preview-actions {
+  text-align: center;
+  padding-top: 40px;
+}
+
+
+/* =========================
+   TEMPLATE MOBILE
+========================= */
+
+@media (max-width: 700px) {
+
+  .modern-hero h1,
+  .creative-hero h1,
+  .minimal-hero h1 {
+    font-size: 38px;
+  }
+
+  .modern-projects,
+  .creative-projects {
+    grid-template-columns: 1fr;
+  }
+
+  .creative-hero {
+    padding: 60px 25px;
+  }
+
+}
+/* =========================
+   TEMPLATE SELECTOR
+========================= */
+
+.template-selector {
+  margin-bottom: 30px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fafafa;
+  text-align: center;
+}
+
+.template-selector h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.template-selector-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.template-select-button {
+  padding: 10px 22px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.2s;
+}
+
+.template-select-button:hover {
+  background: #f1f1f1;
+}
+
+.template-select-button.active {
+  background: #222;
+  color: white;
+  border-color: #222;
+}
+
+.current-template {
+  margin: 15px 0 0;
+  color: #666;
+  text-transform: capitalize;
+}
+
+
+/* =========================
+   TEMPLATE SELECTOR MOBILE
+========================= */
+
+@media (max-width: 600px) {
+  .template-selector-buttons {
+    flex-direction: column;
+  }
+
+  .template-select-button {
+    width: 100%;
+  }
+}
