@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import CreatePortfolio from "./pages/CreatePortfolio";
+import Dashboard from "./pages/Dashboard";
 
 import "./App.css";
 
@@ -13,6 +14,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/create" element={<CreatePortfolio />} />
       </Routes>
     </BrowserRouter>
