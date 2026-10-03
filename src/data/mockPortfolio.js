@@ -1,6 +1,8 @@
+import { getRandomImage } from "./randomImages";
 const mockPortfolio = {
   name: "MOHAMMED ASKAR",
   role: "Full Stack Developer",
+  email: "yourname@email.com",
 
   profileImage:
     "/image/profile.png",
@@ -15,41 +17,46 @@ const mockPortfolio = {
     "MongoDB"
   ],
 
-  projects: [
+ profileImage: getRandomImage(),
+
+projects: [
   {
     title: "Portfolio Builder",
     description: "An AI-powered portfolio creation platform.",
-    image:
-      "/image/Portfolio Builder.png"
+    image: getRandomImage(),
   },
   {
     title: "E-Commerce Website",
     description: "An online shopping website.",
-    image:
-      "/image/E-Commerce-Website.png"
+    image: getRandomImage(),
   },
   {
     title: "Brand Identity",
     description: "A modern visual identity and branding project.",
-    image:
-      "/image/Brand Identity.png"
-  }
+    image: getRandomImage(),
+  },
 ],
 
 caseStudy: {
   title: "Rebranding",
   description:
-    "A rebranding project focused on clarity, heritage, and timeless appeal. The design introduces a refined visual direction through thoughtful typography and modern composition.",
-  image: "/image/case-study.png",
+    "A rebranding project focused on clarity, heritage, and timeless appeal.",
+  image: getRandomImage(),
 },
 
 designPhilosophy: {
-  image: "/image/design-philosophy.png",
+  text1: "Design communicates before words do",
+  text2: "Simplicity strengthens emotional impact",
+  image: getRandomImage(),
 },
 
 coreValues: {
-  image1: "/image/Core value 1.jpeg",
-  image2: "/image/core value 2.jpeg",
+  image1: getRandomImage(),
+  image2: getRandomImage(),
+},
+
+personalAesthetic: {
+  image: getRandomImage(),
 },
 
     socialLinks: {
