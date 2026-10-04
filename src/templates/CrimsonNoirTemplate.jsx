@@ -1,8 +1,5 @@
-// Template 07 — Crimson Noir (animated)
-// Black + crimson, giant name behind the portrait.
-// Font: Anton (display) + Inter
-
 import { useEffect, useRef, useState } from "react";
+
 import { Img, Socials } from "./shared";
 
 const display = {
@@ -26,6 +23,7 @@ const CSS = `
   0%,100% {
     transform: translate3d(0,0,0) scale(1);
   }
+
   50% {
     transform: translate3d(25px,-35px,0) scale(1.08);
   }
@@ -35,6 +33,7 @@ const CSS = `
   0%,100% {
     transform: translate3d(0,0,0) scale(1);
   }
+
   50% {
     transform: translate3d(-30px,25px,0) scale(.95);
   }
@@ -52,6 +51,7 @@ const CSS = `
       0 0 0 0 rgba(239,68,68,.55),
       0 0 25px rgba(239,68,68,.2);
   }
+
   100% {
     box-shadow:
       0 0 0 20px rgba(239,68,68,0),
@@ -63,6 +63,7 @@ const CSS = `
   0%,100% {
     opacity:.3;
   }
+
   50% {
     opacity:.75;
   }
@@ -78,6 +79,7 @@ const CSS = `
   from {
     transform: translateX(-140%) skewX(-20deg);
   }
+
   to {
     transform: translateX(230%) skewX(-20deg);
   }
@@ -87,6 +89,7 @@ const CSS = `
   0%,100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-8px);
   }
@@ -96,6 +99,7 @@ const CSS = `
   0%,49% {
     opacity:1;
   }
+
   50%,100% {
     opacity:0;
   }
@@ -106,6 +110,7 @@ const CSS = `
     transform:scaleX(0);
     transform-origin:left;
   }
+
   to {
     transform:scaleX(1);
     transform-origin:left;
@@ -116,6 +121,7 @@ const CSS = `
   0%,100% {
     opacity:.25;
   }
+
   50% {
     opacity:.6;
   }
@@ -170,7 +176,7 @@ const CSS = `
   transform:none;
 }
 
-/* Image wipe */
+/* Original image wipe */
 
 .cn-wipe {
   clip-path:inset(0 100% 0 0);
@@ -180,6 +186,21 @@ const CSS = `
 
 .cn-wipe.cn-in {
   clip-path:inset(0 0 0 0);
+}
+
+/* Safe image reveal */
+
+.cn-image-reveal {
+  opacity:0;
+  transform:translateY(28px) scale(.97);
+  transition:
+    opacity .9s ${EASE},
+    transform 1s ${EASE};
+}
+
+.cn-image-reveal.cn-image-in {
+  opacity:1;
+  transform:none;
 }
 
 /* Giant background text */
@@ -231,6 +252,7 @@ const CSS = `
 
 .cn-card:hover {
   border-color:rgba(239,68,68,.6);
+
   box-shadow:
     0 0 35px rgba(239,68,68,.12);
 }
@@ -285,7 +307,8 @@ const CSS = `
 @media (prefers-reduced-motion:reduce) {
   .cn-r,
   .cn-word > span,
-  .cn-wipe {
+  .cn-wipe,
+  .cn-image-reveal {
     opacity:1!important;
     transform:none!important;
     clip-path:none!important;
@@ -410,6 +433,8 @@ function Title({
   );
 }
 
+/* Original wipe - kept for any other future usage */
+
 function Wipe({
   children,
   delay = 0,
@@ -428,6 +453,54 @@ function Wipe({
       } ${className}`}
     >
       {children}
+    </div>
+  );
+}
+
+/* =========================================================
+   SAFE IMAGE REVEAL
+
+   Used for the four problematic image sections.
+   Does NOT use clip-path.
+========================================================= */
+
+function ImageReveal({
+  src,
+  alt,
+  delay = 0,
+  className = "",
+  imageClassName = "",
+}) {
+  const [ref, seen] = useInView(0.08);
+
+  if (!src) {
+    return (
+      <div
+        ref={ref}
+        className={`flex items-center justify-center bg-neutral-950 text-sm text-neutral-600 ${className}`}
+      >
+        Image not available
+      </div>
+    );
+  }
+
+  return (
+    <div
+      ref={ref}
+      style={{
+        transitionDelay: `${delay}ms`,
+      }}
+      className={`cn-image-reveal ${
+        seen ? "cn-image-in" : ""
+      } ${className}`}
+    >
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+        className={`block ${imageClassName}`}
+      />
     </div>
   );
 }
@@ -526,51 +599,6 @@ function Tilt({
       {children}
     </div>
   );
-}
-
-function Count({ to }) {
-  const [ref, seen] = useInView(0.5);
-  const [value, setValue] = useState(0);
-
-  useEffect(() => {
-    if (!seen) return;
-
-    if (
-      window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
-      ).matches
-    ) {
-      setValue(to);
-      return;
-    }
-
-    let raf;
-    let start;
-
-    const step = (time) => {
-      start ??= time;
-
-      const progress = Math.min(
-        1,
-        (time - start) / 1000
-      );
-
-      const eased =
-        1 - Math.pow(1 - progress, 3);
-
-      setValue(Math.round(to * eased));
-
-      if (progress < 1) {
-        raf = requestAnimationFrame(step);
-      }
-    };
-
-    raf = requestAnimationFrame(step);
-
-    return () => cancelAnimationFrame(raf);
-  }, [seen, to]);
-
-  return <span ref={ref}>{value}</span>;
 }
 
 function SectionTitle({
@@ -713,6 +741,7 @@ function CrimsonNoirTemplate({
 
   return (
     <div
+      id="top"
       style={body}
       className="min-h-screen overflow-x-hidden bg-black text-neutral-300"
     >
@@ -762,8 +791,6 @@ function CrimsonNoirTemplate({
         ref={hero}
         className="relative mx-auto flex min-h-[90vh] max-w-7xl flex-col justify-between overflow-hidden px-5 pt-5"
       >
-        {/* Animated background glow */}
-
         <div
           aria-hidden="true"
           className="cn-anim absolute -left-40 top-20 h-96 w-96 rounded-full bg-red-800/20 blur-3xl"
@@ -873,9 +900,7 @@ function CrimsonNoirTemplate({
             className="max-w-[10ch] break-words text-5xl uppercase leading-none text-white sm:text-7xl lg:text-8xl"
           />
 
-          <Reveal
-            delay={600}
-          >
+          <Reveal delay={600}>
             <p className="mt-3 text-red-500">
               {role}
             </p>
@@ -896,7 +921,7 @@ function CrimsonNoirTemplate({
             {projects?.length > 0 && (
               <a
                 href="#work"
-                className="cn-btn rounded bg-red-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-red-500 hover:-translate-y-0.5 hover:shadow-[0_0_30px_rgba(239,68,68,.35)]"
+                className="cn-btn rounded bg-red-600 px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-red-500 hover:shadow-[0_0_30px_rgba(239,68,68,.35)]"
               >
                 View my work
               </a>
@@ -910,9 +935,7 @@ function CrimsonNoirTemplate({
         </div>
       </section>
 
-      {/* =================================================
-          SKILL MARQUEE
-      ================================================= */}
+      {/* SKILL MARQUEE */}
 
       {skills?.length > 0 && (
         <div
@@ -936,6 +959,7 @@ function CrimsonNoirTemplate({
                   className="flex items-center gap-10"
                 >
                   {skill}
+
                   <span className="text-red-600">
                     ◆
                   </span>
@@ -1043,15 +1067,15 @@ function CrimsonNoirTemplate({
             </div>
           </div>
 
-          <Wipe>
-            <Img
-              src={
-                designPhilosophy?.image
-              }
+          {/* FIXED IMAGE */}
+
+          <div className="overflow-hidden border border-white/10 bg-neutral-950">
+            <ImageReveal
+              src={designPhilosophy?.image}
               alt="Design philosophy"
-              className="aspect-[4/3] w-full border border-white/10 object-cover"
+              imageClassName="aspect-[4/3] w-full object-cover transition duration-700 hover:scale-105"
             />
-          </Wipe>
+          </div>
         </div>
       </section>
 
@@ -1092,15 +1116,16 @@ function CrimsonNoirTemplate({
                       {num(index)}
                     </span>
 
-                    <Wipe delay={150}>
-                      <Img
+                    {/* FIXED IMAGE */}
+
+                    <div className="mt-5 overflow-hidden bg-neutral-950">
+                      <ImageReveal
                         src={image}
-                        alt={`Core value ${
-                          index + 1
-                        }`}
-                        className="mt-5 aspect-[4/5] w-full object-cover transition duration-700 group-hover:scale-105"
+                        alt={`Core value ${index + 1}`}
+                        delay={150}
+                        imageClassName="aspect-[4/5] w-full object-cover transition duration-700 group-hover:scale-105"
                       />
-                    </Wipe>
+                    </div>
 
                     <h3
                       style={display}
@@ -1268,18 +1293,19 @@ function CrimsonNoirTemplate({
           </SectionTitle>
 
           <div className="grid gap-8 lg:grid-cols-2">
-            <Wipe>
-              <div className="overflow-hidden border border-white/10">
-                <Img
-                  src={caseStudy?.image}
-                  alt={
-                    caseStudy?.title ||
-                    "Case study"
-                  }
-                  className="aspect-video w-full object-cover transition duration-700 hover:scale-105"
-                />
-              </div>
-            </Wipe>
+
+            {/* FIXED IMAGE */}
+
+            <div className="overflow-hidden border border-white/10 bg-neutral-950">
+              <ImageReveal
+                src={caseStudy?.image}
+                alt={
+                  caseStudy?.title ||
+                  "Case study"
+                }
+                imageClassName="aspect-video w-full object-cover transition duration-700 hover:scale-105"
+              />
+            </div>
 
             <div className="flex flex-col justify-center">
               <Reveal
@@ -1378,18 +1404,17 @@ function CrimsonNoirTemplate({
           </SectionTitle>
 
           <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
+
+            {/* FIXED IMAGE */}
+
             <div className="lg:col-span-8">
-              <Wipe>
-                <div className="group overflow-hidden">
-                  <Img
-                    src={
-                      personalAesthetic?.image
-                    }
-                    alt="Personal aesthetic"
-                    className="aspect-[16/9] w-full object-cover grayscale transition duration-700 group-hover:scale-105 group-hover:grayscale-0"
-                  />
-                </div>
-              </Wipe>
+              <div className="group overflow-hidden bg-neutral-950">
+                <ImageReveal
+                  src={personalAesthetic?.image}
+                  alt="Personal aesthetic"
+                  imageClassName="aspect-[16/9] w-full object-cover grayscale transition duration-700 group-hover:scale-105 group-hover:grayscale-0"
+                />
+              </div>
             </div>
 
             <Title
@@ -1551,9 +1576,7 @@ function CrimsonNoirTemplate({
         </div>
       </section>
 
-      {/* =================================================
-          FOOTER
-      ================================================= */}
+      {/* FOOTER */}
 
       <footer className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-10 md:flex-row md:items-center md:justify-between">

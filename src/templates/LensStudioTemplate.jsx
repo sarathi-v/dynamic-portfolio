@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+
 import { Img, Socials } from "./shared";
 
 const serif = {
@@ -21,6 +22,7 @@ const CSS = `
   0%,100% {
     transform:translate3d(0,0,0) scale(1);
   }
+
   50% {
     transform:translate3d(25px,-30px,0) scale(1.05);
   }
@@ -30,6 +32,7 @@ const CSS = `
   0%,100% {
     transform:translate3d(0,0,0);
   }
+
   50% {
     transform:translate3d(-25px,25px,0);
   }
@@ -103,7 +106,7 @@ const CSS = `
   }
 }
 
-/* Reveal */
+/* Normal reveal */
 
 .ls-r {
   opacity:0;
@@ -152,7 +155,7 @@ const CSS = `
   transform:none;
 }
 
-/* Image wipe */
+/* Original wipe */
 
 .ls-wipe {
   clip-path:inset(0 100% 0 0);
@@ -162,6 +165,21 @@ const CSS = `
 
 .ls-wipe.ls-in {
   clip-path:inset(0 0 0 0);
+}
+
+/* SAFE IMAGE REVEAL */
+
+.ls-image-reveal {
+  opacity:0;
+  transform:translateY(28px) scale(.97);
+  transition:
+    opacity .9s ${EASE},
+    transform 1s ${EASE};
+}
+
+.ls-image-reveal.ls-image-in {
+  opacity:1;
+  transform:none;
 }
 
 /* Image hover */
@@ -200,6 +218,7 @@ const CSS = `
 
 .ls-card:hover {
   border-color:rgba(217,180,143,.45);
+
   box-shadow:
     0 20px 60px rgba(0,0,0,.18);
 }
@@ -243,7 +262,8 @@ const CSS = `
 @media (prefers-reduced-motion:reduce) {
   .ls-r,
   .ls-word > span,
-  .ls-wipe {
+  .ls-wipe,
+  .ls-image-reveal {
     opacity:1!important;
     transform:none!important;
     clip-path:none!important;
@@ -367,6 +387,8 @@ function Title({
   );
 }
 
+/* Original wipe kept for non-problematic sections */
+
 function Wipe({
   children,
   delay = 0,
@@ -385,6 +407,54 @@ function Wipe({
       } ${className}`}
     >
       {children}
+    </div>
+  );
+}
+
+/* =========================================================
+   SAFE IMAGE REVEAL
+
+   Important:
+   These images do NOT use clip-path.
+========================================================= */
+
+function ImageReveal({
+  src,
+  alt,
+  delay = 0,
+  className = "",
+  imageClassName = "",
+}) {
+  const [ref, seen] = useInView(0.08);
+
+  if (!src) {
+    return (
+      <div
+        ref={ref}
+        className={`flex items-center justify-center bg-neutral-900 text-sm text-neutral-500 ${className}`}
+      >
+        Image not available
+      </div>
+    );
+  }
+
+  return (
+    <div
+      ref={ref}
+      style={{
+        transitionDelay: `${delay}ms`,
+      }}
+      className={`ls-image-reveal ${
+        seen ? "ls-image-in" : ""
+      } ${className}`}
+    >
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+        className={`block ${imageClassName}`}
+      />
     </div>
   );
 }
@@ -697,8 +767,6 @@ function LensStudioTemplate({ portfolio }) {
         ref={hero}
         className="relative overflow-hidden bg-black text-white"
       >
-        {/* Ambient glow */}
-
         <div
           aria-hidden="true"
           className="ls-anim absolute -left-40 top-20 h-96 w-96 rounded-full bg-[#d9b48f]/10 blur-3xl"
@@ -941,16 +1009,17 @@ function LensStudioTemplate({ portfolio }) {
             </div>
           </div>
 
+          {/* FIXED DESIGN PHILOSOPHY IMAGE */}
+
           {designPhilosophy?.image && (
-            <Wipe delay={200}>
-              <Img
-                src={
-                  designPhilosophy.image
-                }
+            <div className="overflow-hidden rounded-xl bg-black">
+              <ImageReveal
+                src={designPhilosophy.image}
                 alt="Design philosophy"
-                className="ls-image aspect-[4/3] w-full rounded-xl object-cover"
+                delay={200}
+                imageClassName="ls-image aspect-[4/3] w-full rounded-xl object-cover"
               />
-            </Wipe>
+            </div>
           )}
         </div>
       </section>
@@ -1003,14 +1072,14 @@ function LensStudioTemplate({ portfolio }) {
                   as="article"
                   className="h-full"
                 >
+                  {/* FIXED CORE VALUE IMAGE */}
+
                   {image && (
-                    <div className="overflow-hidden rounded-xl">
-                      <Img
+                    <div className="overflow-hidden rounded-xl bg-neutral-100">
+                      <ImageReveal
                         src={image}
-                        alt={`Core value ${
-                          index + 1
-                        }`}
-                        className="ls-image aspect-[4/3] w-full rounded-xl object-cover"
+                        alt={`Core value ${index + 1}`}
+                        imageClassName="ls-image aspect-[4/3] w-full rounded-xl object-cover"
                       />
                     </div>
                   )}
@@ -1257,14 +1326,17 @@ function LensStudioTemplate({ portfolio }) {
               </Reveal>
             </div>
 
+            {/* FIXED CASE STUDY IMAGE */}
+
             {caseStudy.image && (
-              <Wipe delay={200}>
-                <Img
+              <div className="overflow-hidden rounded-lg bg-black">
+                <ImageReveal
                   src={caseStudy.image}
                   alt={caseStudy.title}
-                  className="ls-image aspect-video w-full rounded-lg object-cover"
+                  delay={200}
+                  imageClassName="ls-image aspect-video w-full rounded-lg object-cover"
                 />
-              </Wipe>
+              </div>
             )}
           </div>
         </section>
@@ -1365,17 +1437,16 @@ function LensStudioTemplate({ portfolio }) {
               </Reveal>
             </div>
 
-            <Wipe delay={200}>
-              <div className="group overflow-hidden rounded-xl">
-                <Img
-                  src={
-                    personalAesthetic.image
-                  }
-                  alt="Personal aesthetic"
-                  className="ls-image aspect-[4/3] w-full rounded-xl object-cover"
-                />
-              </div>
-            </Wipe>
+            {/* FIXED PERSONAL AESTHETIC IMAGE */}
+
+            <div className="overflow-hidden rounded-xl bg-neutral-100">
+              <ImageReveal
+                src={personalAesthetic.image}
+                alt="Personal aesthetic"
+                delay={200}
+                imageClassName="ls-image aspect-[4/3] w-full rounded-xl object-cover"
+              />
+            </div>
           </div>
         </section>
       )}

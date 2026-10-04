@@ -1,14 +1,5 @@
-// Template 06 — Neon Nexus (animated)
-// Futuristic deep-blue / cyan glow.
-// Fonts: Orbitron (headings) + Inter
-// No extra dependencies.
-
 import { useEffect, useRef, useState } from "react";
 import { Img, Socials } from "./shared";
-
-/* =========================================================
-   FONTS
-========================================================= */
 
 const head = {
   fontFamily: "Orbitron, system-ui, sans-serif",
@@ -19,10 +10,6 @@ const body = {
 };
 
 const EASE = "cubic-bezier(.2,.7,.2,1)";
-
-/* =========================================================
-   ANIMATION CSS
-========================================================= */
 
 const CSS = `
 @keyframes nx-float {
@@ -125,7 +112,11 @@ const CSS = `
   }
 }
 
-/* reveal */
+@keyframes nx-gradient-shift {
+  to {
+    background-position:200% center;
+  }
+}
 
 .nx-r {
   opacity:0;
@@ -155,8 +146,6 @@ const CSS = `
   transform:none;
 }
 
-/* wipe */
-
 .nx-wipe {
   opacity:1;
   clip-path:inset(0 100% 0 0);
@@ -167,8 +156,6 @@ const CSS = `
 .nx-wipe.nx-in {
   clip-path:inset(0 0 0 0);
 }
-
-/* words */
 
 .nx-word {
   display:inline-block;
@@ -186,8 +173,6 @@ const CSS = `
 .nx-title-in .nx-word > span {
   transform:none;
 }
-
-/* grid */
 
 .nx-grid {
   background-image:
@@ -210,8 +195,6 @@ const CSS = `
       transparent 78%
     );
 }
-
-/* scan line */
 
 .nx-scan {
   position:absolute;
@@ -236,8 +219,6 @@ const CSS = `
   animation:nx-scan 6s linear infinite;
 }
 
-/* gradient text */
-
 .nx-gradient {
   background:
     linear-gradient(
@@ -255,17 +236,8 @@ const CSS = `
 
   color:transparent;
 
-  animation:
-    nx-gradient-shift 5s linear infinite;
+  animation:nx-gradient-shift 5s linear infinite;
 }
-
-@keyframes nx-gradient-shift {
-  to {
-    background-position:200% center;
-  }
-}
-
-/* card */
 
 .nx-card {
   position:relative;
@@ -282,8 +254,6 @@ const CSS = `
     0 0 35px rgba(34,211,238,.12);
 }
 
-/* spotlight */
-
 .nx-spot {
   background:
     radial-gradient(
@@ -292,8 +262,6 @@ const CSS = `
       transparent 70%
     );
 }
-
-/* button shine */
 
 .nx-btn {
   position:relative;
@@ -313,15 +281,18 @@ const CSS = `
   animation:nx-shine .8s ease;
 }
 
-/* terminal */
-
 .nx-terminal {
   box-shadow:
     0 0 40px rgba(34,211,238,.12),
     inset 0 0 40px rgba(34,211,238,.03);
 }
 
-/* reduced motion */
+.nx-aesthetic-image {
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
 
 @media (prefers-reduced-motion:reduce) {
   .nx-r,
@@ -340,10 +311,6 @@ const CSS = `
   }
 }
 `;
-
-/* =========================================================
-   HELPERS
-========================================================= */
 
 function useInView(threshold = 0.15) {
   const ref = useRef(null);
@@ -436,8 +403,9 @@ function Title({
                 >
                   <span
                     style={{
-                      transitionDelay:
-                        `${delay + current * 80}ms`,
+                      transitionDelay: `${
+                        delay + current * 80
+                      }ms`,
                     }}
                   >
                     {word}
@@ -653,10 +621,6 @@ function NeonNexusTemplate({ portfolio }) {
       ? skills
       : [role].filter(Boolean);
 
-  /* -----------------------------------------
-     Scroll progress + mouse glow
-  ----------------------------------------- */
-
   useEffect(() => {
     const reduce =
       window.matchMedia(
@@ -749,6 +713,7 @@ function NeonNexusTemplate({ portfolio }) {
       <style>{CSS}</style>
 
       {/* SCROLL PROGRESS */}
+
       <div
         aria-hidden="true"
         className="pointer-events-none fixed inset-x-0 top-0 z-[70] h-1"
@@ -763,6 +728,7 @@ function NeonNexusTemplate({ portfolio }) {
       </div>
 
       {/* MOUSE GLOW */}
+
       <div
         ref={glow}
         aria-hidden="true"
@@ -775,9 +741,7 @@ function NeonNexusTemplate({ portfolio }) {
         }}
       />
 
-      {/* =================================================
-          HEADER
-      ================================================= */}
+      {/* HEADER */}
 
       <header className="sticky top-0 z-50 border-b border-cyan-400/10 bg-[#040a1a]/85 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5">
@@ -796,19 +760,26 @@ function NeonNexusTemplate({ portfolio }) {
             aria-label="Primary"
             className="hidden gap-7 text-xs text-slate-400 md:flex"
           >
-            {[
-              ["about", "About"],
-              ["work", "Work"],
-              ["contact", "Contact"],
-            ].map(([id, label]) => (
-              <a
-                key={id}
-                href={`#${id}`}
-                className="transition hover:text-cyan-300"
-              >
-                {label}
-              </a>
-            ))}
+            <a
+              href="#about"
+              className="transition hover:text-cyan-300"
+            >
+              About
+            </a>
+
+            <a
+              href="#work"
+              className="transition hover:text-cyan-300"
+            >
+              Work
+            </a>
+
+            <a
+              href="#contact"
+              className="transition hover:text-cyan-300"
+            >
+              Contact
+            </a>
           </nav>
 
           {email && (
@@ -826,9 +797,7 @@ function NeonNexusTemplate({ portfolio }) {
         id="top"
         className="relative"
       >
-        {/* =================================================
-            HERO
-        ================================================= */}
+        {/* HERO */}
 
         <section
           ref={hero}
@@ -872,9 +841,7 @@ function NeonNexusTemplate({ portfolio }) {
                 01 / Profile
               </Label>
 
-              <Reveal
-                delay={150}
-              >
+              <Reveal delay={150}>
                 <p className="mt-5 inline-block rounded border border-cyan-400/30 bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-cyan-300">
                   {role}
                 </p>
@@ -912,8 +879,6 @@ function NeonNexusTemplate({ portfolio }) {
                 />
               </Reveal>
             </div>
-
-            {/* PROFILE IMAGE */}
 
             <div className="relative mx-auto w-full max-w-sm">
               <div
@@ -970,35 +935,11 @@ function NeonNexusTemplate({ portfolio }) {
                   />
                 </div>
               </Reveal>
-
-              {/* FLOATING STATUS */}
-
-              <Reveal
-                v="right"
-                delay={700}
-                className="absolute -right-3 bottom-3 z-10 sm:-right-10"
-              >
-                <div className="rounded-lg border border-cyan-400/20 bg-[#07122b]/90 px-4 py-3 text-xs shadow-2xl backdrop-blur-xl">
-                  <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-cyan-300" />
-
-                    <span className="text-cyan-300">
-                      SYSTEM ONLINE
-                    </span>
-                  </div>
-
-                  <p className="mt-1 font-mono text-[10px] text-slate-500">
-                    AVAILABLE_FOR_PROJECTS=true
-                  </p>
-                </div>
-              </Reveal>
             </div>
           </div>
         </section>
 
-        {/* =================================================
-            TICKER
-        ================================================= */}
+        {/* TICKER */}
 
         {ticker.length > 0 && (
           <div
@@ -1031,9 +972,7 @@ function NeonNexusTemplate({ portfolio }) {
           </div>
         )}
 
-        {/* =================================================
-            ABOUT
-        ================================================= */}
+        {/* ABOUT */}
 
         <section
           id="about"
@@ -1099,9 +1038,7 @@ function NeonNexusTemplate({ portfolio }) {
           </div>
         </section>
 
-        {/* =================================================
-            PHILOSOPHY
-        ================================================= */}
+        {/* PHILOSOPHY */}
 
         <section className="mx-auto max-w-7xl px-5 py-20">
           <Label>
@@ -1134,9 +1071,7 @@ function NeonNexusTemplate({ portfolio }) {
 
             <Wipe>
               <Img
-                src={
-                  designPhilosophy?.image
-                }
+                src={designPhilosophy?.image}
                 alt="Design philosophy"
                 className="aspect-[4/3] w-full rounded-xl object-cover shadow-[0_0_45px_rgba(34,211,238,.1)]"
               />
@@ -1144,9 +1079,7 @@ function NeonNexusTemplate({ portfolio }) {
           </div>
         </section>
 
-        {/* =================================================
-            CORE VALUES
-        ================================================= */}
+        {/* CORE VALUES */}
 
         <section className="border-y border-cyan-400/10 bg-white/[.02]">
           <div className="mx-auto max-w-7xl px-5 py-20">
@@ -1169,7 +1102,10 @@ function NeonNexusTemplate({ portfolio }) {
                   "Technology should open new possibilities rather than add unnecessary complexity.",
                 ],
               ].map(
-                ([src, alt, title, description], index) => (
+                (
+                  [src, alt, title, description],
+                  index
+                ) => (
                   <Reveal
                     key={title}
                     delay={index * 150}
@@ -1188,8 +1124,7 @@ function NeonNexusTemplate({ portfolio }) {
 
                       <div className="p-6">
                         <span className="text-xs text-cyan-400">
-                          VALUE 0
-                          {index + 1}
+                          VALUE 0{index + 1}
                         </span>
 
                         <h3
@@ -1211,9 +1146,7 @@ function NeonNexusTemplate({ portfolio }) {
           </div>
         </section>
 
-        {/* =================================================
-            PROCESS
-        ================================================= */}
+        {/* PROCESS */}
 
         <section className="mx-auto max-w-7xl px-5 py-20">
           <Label>
@@ -1251,9 +1184,7 @@ function NeonNexusTemplate({ portfolio }) {
           </Reveal>
         </section>
 
-        {/* =================================================
-            PROJECTS
-        ================================================= */}
+        {/* PROJECTS */}
 
         <section
           id="work"
@@ -1337,9 +1268,7 @@ function NeonNexusTemplate({ portfolio }) {
           )}
         </section>
 
-        {/* =================================================
-            CASE STUDY
-        ================================================= */}
+        {/* CASE STUDY */}
 
         <section className="mx-auto max-w-7xl px-5 py-20">
           <Label>
@@ -1379,9 +1308,7 @@ function NeonNexusTemplate({ portfolio }) {
           </Reveal>
         </section>
 
-        {/* =================================================
-            TOOLS
-        ================================================= */}
+        {/* TOOLS */}
 
         <section className="border-y border-cyan-400/10 bg-white/[.02]">
           <div className="mx-auto max-w-7xl px-5 py-20">
@@ -1446,9 +1373,9 @@ function NeonNexusTemplate({ portfolio }) {
           </div>
         </section>
 
-        {/* =================================================
-            AESTHETIC
-        ================================================= */}
+        {/* =========================
+            PERSONAL AESTHETIC
+        ========================= */}
 
         <section className="mx-auto max-w-7xl px-5 py-20">
           <Label>
@@ -1457,22 +1384,38 @@ function NeonNexusTemplate({ portfolio }) {
 
           <div className="mt-8 grid gap-8 lg:grid-cols-12 lg:items-center">
             <div className="lg:col-span-8">
-              <Wipe>
-                <div className="relative overflow-hidden rounded-xl">
-                  <Img
-                    src={
-                      personalAesthetic?.image
-                    }
-                    alt="Personal aesthetic"
-                    className="aspect-video w-full object-cover transition duration-700 hover:scale-105"
-                  />
+              <Reveal v="zoom">
+                <div className="relative overflow-hidden rounded-xl border border-cyan-400/20 bg-[#07122b]">
+                  {personalAesthetic?.image ? (
+                    <img
+                      src={personalAesthetic.image}
+                      alt="Personal aesthetic"
+                      loading="lazy"
+                      className="nx-aesthetic-image aspect-video transition duration-700 hover:scale-105"
+                    />
+                  ) : (
+                    <div className="flex aspect-video w-full items-center justify-center text-sm text-slate-500">
+                      No personal aesthetic image
+                    </div>
+                  )}
 
                   <div
                     aria-hidden="true"
                     className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#040a1a]/40 to-transparent"
                   />
+
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 border border-cyan-400/10"
+                  />
+
+                  {personalAesthetic?.image && (
+                    <div className="absolute bottom-4 left-4 rounded border border-cyan-400/20 bg-[#040a1a]/80 px-3 py-2 font-mono text-[10px] text-cyan-300 backdrop-blur">
+                      AESTHETIC_IMAGE // ONLINE
+                    </div>
+                  )}
                 </div>
-              </Wipe>
+              </Reveal>
             </div>
 
             <Title
@@ -1489,9 +1432,7 @@ function NeonNexusTemplate({ portfolio }) {
           </div>
         </section>
 
-        {/* =================================================
-            CONTACT
-        ================================================= */}
+        {/* CONTACT */}
 
         <section
           id="contact"
@@ -1531,9 +1472,7 @@ function NeonNexusTemplate({ portfolio }) {
               >
                 {socialLinks?.github && (
                   <a
-                    href={
-                      socialLinks.github
-                    }
+                    href={socialLinks.github}
                     target="_blank"
                     rel="noreferrer"
                     className="underline underline-offset-4 transition hover:text-cyan-300"
@@ -1544,9 +1483,7 @@ function NeonNexusTemplate({ portfolio }) {
 
                 {socialLinks?.linkedin && (
                   <a
-                    href={
-                      socialLinks.linkedin
-                    }
+                    href={socialLinks.linkedin}
                     target="_blank"
                     rel="noreferrer"
                     className="underline underline-offset-4 transition hover:text-cyan-300"
@@ -1559,9 +1496,7 @@ function NeonNexusTemplate({ portfolio }) {
           </div>
         </section>
 
-        {/* =================================================
-            THANK YOU
-        ================================================= */}
+        {/* THANK YOU */}
 
         <section className="relative mx-auto max-w-7xl overflow-hidden px-5 py-24">
           <div
@@ -1631,9 +1566,7 @@ function NeonNexusTemplate({ portfolio }) {
         </section>
       </main>
 
-      {/* =================================================
-          FOOTER
-      ================================================= */}
+      {/* FOOTER */}
 
       <footer className="border-t border-cyan-400/10">
         <div className="mx-auto flex max-w-7xl flex-col justify-between gap-4 px-5 py-8 text-xs text-slate-500 sm:flex-row">
