@@ -6,7 +6,6 @@ function CreatePortfolio() {
   const navigate = useNavigate();
 
   const initialTemplate = location.state?.template || "modern";
-
   const savedPortfolio = location.state?.portfolio || null;
 
   const [selectedTemplate, setSelectedTemplate] = useState(
@@ -17,7 +16,7 @@ function CreatePortfolio() {
   const [showPreview, setShowPreview] = useState(false);
 
   const [themeColor, setThemeColor] = useState(
-    savedPortfolio?.themeColor || "#222222"
+    savedPortfolio?.themeColor || "#7657ff"
   );
 
   const [darkMode, setDarkMode] = useState(
@@ -55,10 +54,10 @@ function CreatePortfolio() {
   function handleChange(event) {
     const { name, value } = event.target;
 
-    setFormData({
-      ...formData,
+    setFormData((previous) => ({
+      ...previous,
       [name]: value,
-    });
+    }));
   }
 
   function handleProfileImageChange(event) {
@@ -81,40 +80,46 @@ function CreatePortfolio() {
   function handleResumeChange(event) {
     const file = event.target.files[0];
 
-    setFormData({
-      ...formData,
+    if (!file) {
+      return;
+    }
+
+    setFormData((previous) => ({
+      ...previous,
       resume: file,
-    });
+    }));
   }
 
   function handleProjectChange(index, event) {
     const { name, value } = event.target;
 
-    const updatedProjects = [...formData.projects];
+    setFormData((previous) => {
+      const updatedProjects = [...previous.projects];
 
-    updatedProjects[index] = {
-      ...updatedProjects[index],
-      [name]: value,
-    };
+      updatedProjects[index] = {
+        ...updatedProjects[index],
+        [name]: value,
+      };
 
-    setFormData({
-      ...formData,
-      projects: updatedProjects,
+      return {
+        ...previous,
+        projects: updatedProjects,
+      };
     });
   }
 
   function addProject() {
-    setFormData({
-      ...formData,
+    setFormData((previous) => ({
+      ...previous,
       projects: [
-        ...formData.projects,
+        ...previous.projects,
         {
           name: "",
           description: "",
           link: "",
         },
       ],
-    });
+    }));
   }
 
   function removeProject(index) {
@@ -122,10 +127,10 @@ function CreatePortfolio() {
       (_, projectIndex) => projectIndex !== index
     );
 
-    setFormData({
-      ...formData,
+    setFormData((previous) => ({
+      ...previous,
       projects: updatedProjects,
-    });
+    }));
   }
 
   function handleTemplateChange(template) {
@@ -134,6 +139,7 @@ function CreatePortfolio() {
     navigate("/create", {
       state: {
         template,
+        portfolio: savedPortfolio,
       },
       replace: true,
     });
@@ -150,7 +156,6 @@ function CreatePortfolio() {
 
   function handlePreview(event) {
     event.preventDefault();
-
     setShowPreview(true);
   }
 
@@ -252,7 +257,17 @@ function CreatePortfolio() {
 
           <div className="preview-topbar">
 
-            <h1>Portfolio Preview</h1>
+            <div>
+              <span className="preview-eyebrow">
+                ✦ FINAL PREVIEW
+              </span>
+
+              <h1>Portfolio Preview</h1>
+
+              <p>
+                Review your portfolio before saving it.
+              </p>
+            </div>
 
             <div className="preview-actions">
 
@@ -261,7 +276,7 @@ function CreatePortfolio() {
                 className="edit-button"
                 onClick={handleEdit}
               >
-                Edit Portfolio
+                ← Edit
               </button>
 
               <button
@@ -269,7 +284,7 @@ function CreatePortfolio() {
                 className="save-button"
                 onClick={savePortfolio}
               >
-                Save Draft
+                Save Draft →
               </button>
 
             </div>
@@ -278,7 +293,7 @@ function CreatePortfolio() {
 
           {savedMessage && (
             <p className="saved-message">
-              {savedMessage}
+              ✓ {savedMessage}
             </p>
           )}
 
@@ -304,7 +319,7 @@ function CreatePortfolio() {
             )}
 
             <p className="selected-template">
-              Template: {selectedTemplate}
+              {selectedTemplate} template
             </p>
 
             <h2>
@@ -327,7 +342,7 @@ function CreatePortfolio() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  GitHub
+                  GitHub ↗
                 </a>
               )}
 
@@ -337,7 +352,7 @@ function CreatePortfolio() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  LinkedIn
+                  LinkedIn ↗
                 </a>
               )}
 
@@ -347,7 +362,7 @@ function CreatePortfolio() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Website
+                  Website ↗
                 </a>
               )}
 
@@ -417,7 +432,7 @@ function CreatePortfolio() {
                       target="_blank"
                       rel="noreferrer"
                     >
-                      View Project
+                      View Project ↗
                     </a>
                   )}
 
@@ -428,7 +443,7 @@ function CreatePortfolio() {
 
           </section>
 
-          {formData.resume && (
+          {(formData.resume || savedPortfolio?.resumeName) && (
             <section className="portfolio-section">
 
               <h2>Resume</h2>
@@ -436,28 +451,14 @@ function CreatePortfolio() {
               <p>
                 Resume uploaded:{" "}
                 <strong>
-                  {formData.resume.name}
+                  {formData.resume
+                    ? formData.resume.name
+                    : savedPortfolio.resumeName}
                 </strong>
               </p>
 
             </section>
           )}
-
-          {!formData.resume &&
-            savedPortfolio?.resumeName && (
-              <section className="portfolio-section">
-
-                <h2>Resume</h2>
-
-                <p>
-                  Resume uploaded:{" "}
-                  <strong>
-                    {savedPortfolio.resumeName}
-                  </strong>
-                </p>
-
-              </section>
-            )}
 
         </div>
       </main>
@@ -465,90 +466,298 @@ function CreatePortfolio() {
   }
 
   return (
-    <main className="create-page">
+    <main className="create-page premium-create-page">
 
       <div className="create-container">
 
-        <h1>
-          {savedPortfolio
-            ? "Edit Your Portfolio"
-            : "Create Your Portfolio"}
-        </h1>
+        {/* HEADER */}
 
-        <p className="create-subtitle">
-          Step {step} of 2
-        </p>
+        <section className="create-hero">
 
-        <div className="template-selector">
+          <div>
 
-          <h3>Select Your Template</h3>
+            <span className="create-eyebrow">
+              ✦ PORTFOLIO BUILDER
+            </span>
 
-          <div className="template-selector-buttons">
+            <h1>
+              {savedPortfolio
+                ? "Refine your portfolio."
+                : "Build your portfolio."}
+            </h1>
+
+            <p>
+              Bring your experience, skills and projects
+              together in a portfolio you're proud to share.
+            </p>
+
+          </div>
+
+          <div className="create-hero-badge">
+            <span>●</span>
+            Autosaved locally
+          </div>
+
+        </section>
+
+        {/* PROGRESS */}
+
+        <section className="builder-progress">
+
+          <div
+            className={
+              step === 1
+                ? "progress-step active"
+                : "progress-step completed"
+            }
+          >
+            <span>01</span>
+
+            <div>
+              <strong>About you</strong>
+              <small>Personal information</small>
+            </div>
+
+          </div>
+
+          <div className="progress-line"></div>
+
+          <div
+            className={
+              step === 2
+                ? "progress-step active"
+                : "progress-step"
+            }
+          >
+            <span>02</span>
+
+            <div>
+              <strong>Your work</strong>
+              <small>Projects & portfolio</small>
+            </div>
+
+          </div>
+
+        </section>
+
+        {/* TEMPLATE SELECTOR */}
+
+        <section className="builder-section">
+
+          <div className="builder-section-heading">
+
+            <div>
+              <span>01 — DESIGN</span>
+
+              <h2>Choose your style</h2>
+
+              <p>
+                Start with a design that matches your
+                professional personality.
+              </p>
+            </div>
+
+            <div className="selected-template-pill">
+              <span></span>
+              {selectedTemplate}
+            </div>
+
+          </div>
+
+          <div className="template-selector-grid">
+
+            {/* MODERN */}
 
             <button
               type="button"
               className={
                 selectedTemplate === "modern"
-                  ? "template-select-button active"
-                  : "template-select-button"
+                  ? "template-card active"
+                  : "template-card"
               }
               onClick={() =>
                 handleTemplateChange("modern")
               }
             >
-              Modern
+
+              <div className="template-card-preview modern-selector-preview">
+
+                <div className="selector-browser-bar">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+
+                <div className="modern-selector-body">
+
+                  <div className="selector-avatar"></div>
+
+                  <div className="selector-line large"></div>
+                  <div className="selector-line medium"></div>
+
+                  <div className="selector-cards">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div className="template-card-info">
+
+                <div>
+                  <strong>Modern</strong>
+                  <small>
+                    Clean & professional
+                  </small>
+                </div>
+
+                <span className="template-arrow">
+                  →
+                </span>
+
+              </div>
+
             </button>
+
+            {/* CREATIVE */}
 
             <button
               type="button"
               className={
                 selectedTemplate === "creative"
-                  ? "template-select-button active"
-                  : "template-select-button"
+                  ? "template-card active"
+                  : "template-card"
               }
               onClick={() =>
                 handleTemplateChange("creative")
               }
             >
-              Creative
+
+              <div className="template-card-preview creative-selector-preview">
+
+                <div className="selector-orb orb-one"></div>
+                <div className="selector-orb orb-two"></div>
+
+                <div className="creative-selector-title">
+                  CREATE
+                </div>
+
+                <div className="creative-selector-lines">
+                  <span></span>
+                  <span></span>
+                </div>
+
+              </div>
+
+              <div className="template-card-info">
+
+                <div>
+                  <strong>Creative</strong>
+                  <small>
+                    Bold & expressive
+                  </small>
+                </div>
+
+                <span className="template-arrow">
+                  →
+                </span>
+
+              </div>
+
             </button>
+
+            {/* MINIMAL */}
 
             <button
               type="button"
               className={
                 selectedTemplate === "minimal"
-                  ? "template-select-button active"
-                  : "template-select-button"
+                  ? "template-card active"
+                  : "template-card"
               }
               onClick={() =>
                 handleTemplateChange("minimal")
               }
             >
-              Minimal
+
+              <div className="template-card-preview minimal-selector-preview">
+
+                <div className="minimal-selector-name">
+                  YOUR NAME
+                </div>
+
+                <div className="minimal-selector-line"></div>
+                <div className="minimal-selector-line short"></div>
+
+                <div className="minimal-selector-nav">
+                  ABOUT&nbsp;&nbsp; WORK&nbsp;&nbsp; CONTACT
+                </div>
+
+              </div>
+
+              <div className="template-card-info">
+
+                <div>
+                  <strong>Minimal</strong>
+                  <small>
+                    Elegant & focused
+                  </small>
+                </div>
+
+                <span className="template-arrow">
+                  →
+                </span>
+
+              </div>
+
             </button>
 
           </div>
 
-          <p className="current-template">
-            Selected:{" "}
-            <strong>{selectedTemplate}</strong>
-          </p>
+        </section>
 
-        </div>
+        {/* CUSTOMIZATION */}
 
-        <div className="customization-panel">
+        <section className="builder-section">
 
-          <h3>Customize Portfolio</h3>
+          <div className="builder-section-heading">
 
-          <div className="customization-options">
+            <div>
+              <span>02 — PERSONALIZE</span>
+
+              <h2>Make it yours</h2>
+
+              <p>
+                Choose a color and appearance for your portfolio.
+              </p>
+            </div>
+
+          </div>
+
+          <div className="premium-customization-panel">
 
             <div className="customization-option">
 
-              <label htmlFor="theme-color">
-                Theme Color
-              </label>
+              <div className="customization-option-icon">
+                ◉
+              </div>
 
-              <div className="color-picker-wrapper">
+              <div className="customization-option-content">
+
+                <label htmlFor="theme-color">
+                  Accent color
+                </label>
+
+                <span>
+                  Choose the color that represents you.
+                </span>
+
+              </div>
+
+              <div className="premium-color-picker">
 
                 <input
                   id="theme-color"
@@ -559,222 +768,351 @@ function CreatePortfolio() {
                   }
                 />
 
-                <span>{themeColor}</span>
+                <strong>
+                  {themeColor.toUpperCase()}
+                </strong>
 
               </div>
 
             </div>
 
+            <div className="customization-divider"></div>
+
             <div className="customization-option">
 
-              <label>Appearance</label>
+              <div className="customization-option-icon">
+                ◐
+              </div>
+
+              <div className="customization-option-content">
+
+                <label>
+                  Appearance
+                </label>
+
+                <span>
+                  Switch between light and dark mode.
+                </span>
+
+              </div>
 
               <button
                 type="button"
                 className={
                   darkMode
-                    ? "mode-button dark-active"
-                    : "mode-button"
+                    ? "premium-mode-button active"
+                    : "premium-mode-button"
                 }
                 onClick={() =>
                   setDarkMode(!darkMode)
                 }
               >
-                {darkMode
-                  ? "☀ Light Mode"
-                  : "🌙 Dark Mode"}
+                <span>
+                  {darkMode ? "☀" : "☾"}
+                </span>
+
+                {darkMode ? "Dark" : "Light"}
               </button>
 
             </div>
 
           </div>
 
-        </div>
+        </section>
 
-        <div className="live-builder">
+        {/* BUILDER */}
+
+        <div className="live-builder premium-live-builder">
 
           <div className="builder-form">
 
             {step === 1 && (
               <form
                 onSubmit={handleNext}
-                className="portfolio-form"
+                className="portfolio-form premium-form"
               >
 
-                <h2>Personal Information</h2>
+                <div className="form-section-heading">
 
-                <div className="form-group">
+                  <span>01</span>
 
-                  <label>Profile Image</label>
+                  <div>
+                    <h2>Tell us about yourself</h2>
 
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleProfileImageChange}
-                  />
+                    <p>
+                      This information will become the foundation
+                      of your portfolio.
+                    </p>
+                  </div>
 
-                  <small>
-                    Upload a JPG, PNG, or other image.
-                  </small>
+                </div>
 
-                  {profileImage && (
-                    <img
-                      src={profileImage}
-                      alt="Selected profile"
-                      className="profile-upload-preview"
+                {/* PROFILE */}
+
+                <div className="premium-form-card">
+
+                  <div className="form-card-title">
+                    <span>Profile</span>
+                    <small>01</small>
+                  </div>
+
+                  <div className="form-group profile-upload-group">
+
+                    <label>
+                      Profile image
+                    </label>
+
+                    <div className="profile-upload-area">
+
+                      {profileImage ? (
+                        <img
+                          src={profileImage}
+                          alt="Selected profile"
+                          className="profile-upload-preview"
+                        />
+                      ) : (
+                        <div className="profile-placeholder">
+                          +
+                        </div>
+                      )}
+
+                      <div>
+                        <label
+                          htmlFor="profile-image"
+                          className="upload-button"
+                        >
+                          Choose image
+                        </label>
+
+                        <input
+                          id="profile-image"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleProfileImageChange}
+                          className="hidden-file-input"
+                        />
+
+                        <small>
+                          JPG, PNG or other image format.
+                        </small>
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                  <div className="form-grid">
+
+                    <div className="form-group">
+
+                      <label>Full name</label>
+
+                      <input
+                        type="text"
+                        name="name"
+                        placeholder="Your full name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        required
+                      />
+
+                    </div>
+
+                    <div className="form-group">
+
+                      <label>Professional title</label>
+
+                      <input
+                        type="text"
+                        name="title"
+                        placeholder="Full Stack Developer"
+                        value={formData.title}
+                        onChange={handleChange}
+                        required
+                      />
+
+                    </div>
+
+                  </div>
+
+                  <div className="form-group">
+
+                    <label>Email address</label>
+
+                    <input
+                      type="email"
+                      name="email"
+                      placeholder="you@example.com"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
                     />
-                  )}
+
+                  </div>
 
                 </div>
 
-                <div className="form-group">
+                {/* ABOUT */}
 
-                  <label>Full Name</label>
+                <div className="premium-form-card">
 
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="Enter your full name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                  />
+                  <div className="form-card-title">
+                    <span>About you</span>
+                    <small>02</small>
+                  </div>
 
-                </div>
+                  <div className="form-group">
 
-                <div className="form-group">
+                    <label>About me</label>
 
-                  <label>Professional Title</label>
+                    <textarea
+                      name="about"
+                      placeholder="Tell people who you are, what you do and what you're passionate about..."
+                      rows="7"
+                      value={formData.about}
+                      onChange={handleChange}
+                      required
+                    ></textarea>
 
-                  <input
-                    type="text"
-                    name="title"
-                    placeholder="Example: Full Stack Developer"
-                    value={formData.title}
-                    onChange={handleChange}
-                    required
-                  />
+                  </div>
 
-                </div>
+                  <div className="form-group">
 
-                <div className="form-group">
+                    <label>Skills</label>
 
-                  <label>Email</label>
+                    <input
+                      type="text"
+                      name="skills"
+                      placeholder="React, JavaScript, Node.js, MongoDB"
+                      value={formData.skills}
+                      onChange={handleChange}
+                      required
+                    />
 
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="Enter your email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                  />
-
-                </div>
-
-                <div className="form-group">
-
-                  <label>About Me</label>
-
-                  <textarea
-                    name="about"
-                    placeholder="Tell us about yourself..."
-                    rows="6"
-                    value={formData.about}
-                    onChange={handleChange}
-                    required
-                  ></textarea>
-
-                </div>
-
-                <div className="form-group">
-
-                  <label>Skills</label>
-
-                  <input
-                    type="text"
-                    name="skills"
-                    placeholder="React, JavaScript, Node.js, MongoDB"
-                    value={formData.skills}
-                    onChange={handleChange}
-                    required
-                  />
-
-                  <small>
-                    Separate each skill with a comma.
-                  </small>
-
-                </div>
-
-                <div className="form-group">
-
-                  <label>GitHub Profile</label>
-
-                  <input
-                    type="url"
-                    name="github"
-                    placeholder="https://github.com/yourusername"
-                    value={formData.github}
-                    onChange={handleChange}
-                  />
-
-                </div>
-
-                <div className="form-group">
-
-                  <label>LinkedIn Profile</label>
-
-                  <input
-                    type="url"
-                    name="linkedin"
-                    placeholder="https://linkedin.com/in/yourusername"
-                    value={formData.linkedin}
-                    onChange={handleChange}
-                  />
-
-                </div>
-
-                <div className="form-group">
-
-                  <label>Personal Website</label>
-
-                  <input
-                    type="url"
-                    name="website"
-                    placeholder="https://yourwebsite.com"
-                    value={formData.website}
-                    onChange={handleChange}
-                  />
-
-                </div>
-
-                <div className="form-group">
-
-                  <label>Upload Resume</label>
-
-                  <input
-                    type="file"
-                    accept=".pdf,.doc,.docx"
-                    onChange={handleResumeChange}
-                  />
-
-                  <small>
-                    Upload your resume as PDF or Word document.
-                  </small>
-
-                  {formData.resume && (
                     <small>
-                      Selected: {formData.resume.name}
+                      Separate skills with commas.
                     </small>
-                  )}
+
+                  </div>
+
+                </div>
+
+                {/* SOCIAL */}
+
+                <div className="premium-form-card">
+
+                  <div className="form-card-title">
+                    <span>Online presence</span>
+                    <small>03</small>
+                  </div>
+
+                  <div className="form-group">
+
+                    <label>GitHub</label>
+
+                    <input
+                      type="url"
+                      name="github"
+                      placeholder="https://github.com/yourusername"
+                      value={formData.github}
+                      onChange={handleChange}
+                    />
+
+                  </div>
+
+                  <div className="form-group">
+
+                    <label>LinkedIn</label>
+
+                    <input
+                      type="url"
+                      name="linkedin"
+                      placeholder="https://linkedin.com/in/yourusername"
+                      value={formData.linkedin}
+                      onChange={handleChange}
+                    />
+
+                  </div>
+
+                  <div className="form-group">
+
+                    <label>Personal website</label>
+
+                    <input
+                      type="url"
+                      name="website"
+                      placeholder="https://yourwebsite.com"
+                      value={formData.website}
+                      onChange={handleChange}
+                    />
+
+                  </div>
+
+                </div>
+
+                {/* RESUME */}
+
+                <div className="premium-form-card">
+
+                  <div className="form-card-title">
+                    <span>Resume</span>
+                    <small>04</small>
+                  </div>
+
+                  <div className="resume-upload-area">
+
+                    <div className="resume-icon">
+                      ↑
+                    </div>
+
+                    <div>
+                      <strong>
+                        Upload your resume
+                      </strong>
+
+                      <span>
+                        PDF, DOC or DOCX
+                      </span>
+
+                      {formData.resume && (
+                        <small>
+                          ✓ {formData.resume.name}
+                        </small>
+                      )}
+
+                      {!formData.resume &&
+                        savedPortfolio?.resumeName && (
+                          <small>
+                            ✓ {savedPortfolio.resumeName}
+                          </small>
+                        )}
+                    </div>
+
+                    <label
+                      htmlFor="resume-upload"
+                      className="upload-button"
+                    >
+                      Browse
+                    </label>
+
+                    <input
+                      id="resume-upload"
+                      type="file"
+                      accept=".pdf,.doc,.docx"
+                      onChange={handleResumeChange}
+                      className="hidden-file-input"
+                    />
+
+                  </div>
 
                 </div>
 
                 <button
                   type="submit"
-                  className="save-button"
+                  className="builder-next-button"
                 >
-                  Save & Continue
+                  Continue to Projects
+                  <span>→</span>
                 </button>
 
               </form>
@@ -783,22 +1121,42 @@ function CreatePortfolio() {
             {step === 2 && (
               <form
                 onSubmit={handlePreview}
-                className="portfolio-form"
+                className="portfolio-form premium-form"
               >
 
-                <h2>Your Projects</h2>
+                <div className="form-section-heading">
+
+                  <span>02</span>
+
+                  <div>
+                    <h2>Showcase your work</h2>
+
+                    <p>
+                      Add the projects that best represent
+                      your skills and experience.
+                    </p>
+                  </div>
+
+                </div>
 
                 {formData.projects.map((project, index) => (
                   <div
-                    className="project-form-card"
+                    className="premium-project-card"
                     key={index}
                   >
 
                     <div className="project-header">
 
-                      <h3>
-                        Project {index + 1}
-                      </h3>
+                      <div>
+                        <span>
+                          PROJECT {String(index + 1).padStart(2, "0")}
+                        </span>
+
+                        <h3>
+                          {project.name ||
+                            "Untitled project"}
+                        </h3>
+                      </div>
 
                       {formData.projects.length > 1 && (
                         <button
@@ -816,12 +1174,12 @@ function CreatePortfolio() {
 
                     <div className="form-group">
 
-                      <label>Project Name</label>
+                      <label>Project name</label>
 
                       <input
                         type="text"
                         name="name"
-                        placeholder="Example: AI Portfolio Builder"
+                        placeholder="AI Portfolio Builder"
                         value={project.name}
                         onChange={(event) =>
                           handleProjectChange(index, event)
@@ -833,12 +1191,12 @@ function CreatePortfolio() {
 
                     <div className="form-group">
 
-                      <label>Project Description</label>
+                      <label>Description</label>
 
                       <textarea
                         name="description"
-                        placeholder="Describe your project..."
-                        rows="5"
+                        placeholder="Explain what you built, the problem you solved and the technologies you used..."
+                        rows="6"
                         value={project.description}
                         onChange={(event) =>
                           handleProjectChange(index, event)
@@ -850,7 +1208,7 @@ function CreatePortfolio() {
 
                     <div className="form-group">
 
-                      <label>Project Link</label>
+                      <label>Project link</label>
 
                       <input
                         type="url"
@@ -869,27 +1227,29 @@ function CreatePortfolio() {
 
                 <button
                   type="button"
-                  className="add-project-button"
+                  className="add-project-button premium-add-project"
                   onClick={addProject}
                 >
-                  + Add Another Project
+                  <span>+</span>
+                  Add another project
                 </button>
 
-                <div className="form-buttons">
+                <div className="form-buttons premium-form-buttons">
 
                   <button
                     type="button"
                     className="back-button"
                     onClick={handleBack}
                   >
-                    Back
+                    ← Back
                   </button>
 
                   <button
                     type="submit"
-                    className="save-button"
+                    className="builder-next-button"
                   >
                     Preview Portfolio
+                    <span>↗</span>
                   </button>
 
                 </div>
@@ -899,8 +1259,10 @@ function CreatePortfolio() {
 
           </div>
 
+          {/* LIVE PREVIEW */}
+
           <div
-            className={`live-preview ${
+            className={`live-preview premium-live-preview ${
               darkMode ? "live-preview-dark" : ""
             }`}
             style={previewStyle}
@@ -908,9 +1270,19 @@ function CreatePortfolio() {
 
             <div className="live-preview-header">
 
-              <h2>Live Preview</h2>
+              <div>
+                <span>LIVE</span>
+                <h2>Your portfolio</h2>
+              </div>
 
-              <span>{selectedTemplate}</span>
+              <div
+                className="live-template-badge"
+                style={{
+                  backgroundColor: themeColor,
+                }}
+              >
+                {selectedTemplate}
+              </div>
 
             </div>
 
@@ -937,14 +1309,19 @@ function CreatePortfolio() {
                   </div>
                 )}
 
+                <span
+                  className="live-preview-role"
+                  style={{
+                    color: themeColor,
+                  }}
+                >
+                  {formData.title ||
+                    "Your Professional Title"}
+                </span>
+
                 <h1>
                   {formData.name || "Your Name"}
                 </h1>
-
-                <h3>
-                  {formData.title ||
-                    "Your Professional Title"}
-                </h3>
 
                 {formData.email && (
                   <p>{formData.email}</p>
@@ -961,7 +1338,7 @@ function CreatePortfolio() {
                         color: themeColor,
                       }}
                     >
-                      GitHub
+                      GitHub ↗
                     </a>
                   )}
 
@@ -974,7 +1351,7 @@ function CreatePortfolio() {
                         color: themeColor,
                       }}
                     >
-                      LinkedIn
+                      LinkedIn ↗
                     </a>
                   )}
 
@@ -987,7 +1364,7 @@ function CreatePortfolio() {
                         color: themeColor,
                       }}
                     >
-                      Website
+                      Website ↗
                     </a>
                   )}
 
@@ -996,6 +1373,15 @@ function CreatePortfolio() {
               </section>
 
               <section className="live-section">
+
+                <span
+                  className="live-section-number"
+                  style={{
+                    color: themeColor,
+                  }}
+                >
+                  01
+                </span>
 
                 <h2 style={{ color: themeColor }}>
                   About Me
@@ -1009,6 +1395,15 @@ function CreatePortfolio() {
               </section>
 
               <section className="live-section">
+
+                <span
+                  className="live-section-number"
+                  style={{
+                    color: themeColor,
+                  }}
+                >
+                  02
+                </span>
 
                 <h2 style={{ color: themeColor }}>
                   Skills
@@ -1039,6 +1434,15 @@ function CreatePortfolio() {
 
               <section className="live-section">
 
+                <span
+                  className="live-section-number"
+                  style={{
+                    color: themeColor,
+                  }}
+                >
+                  03
+                </span>
+
                 <h2 style={{ color: themeColor }}>
                   Projects
                 </h2>
@@ -1053,6 +1457,10 @@ function CreatePortfolio() {
                         borderTopColor: themeColor,
                       }}
                     >
+
+                      <span className="live-project-number">
+                        0{index + 1}
+                      </span>
 
                       <h3>
                         {project.name ||
