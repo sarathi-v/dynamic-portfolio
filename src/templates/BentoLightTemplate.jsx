@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+
 import { Img, Socials, philosophy } from "./shared";
 
 const font = {
@@ -77,7 +78,6 @@ function Title({
   delay = 0,
 }) {
   const words = String(children).split(" ");
-
   const [ref, visible] = useInView(0.2);
 
   return (
@@ -132,7 +132,9 @@ function Wipe({
       <div
         className="pointer-events-none absolute inset-0 bg-[#eef0f5]"
         style={{
-          transform: visible ? "translateX(105%)" : "translateX(0)",
+          transform: visible
+            ? "translateX(105%)"
+            : "translateX(0)",
           transition:
             "transform 1100ms cubic-bezier(.77,0,.18,1)",
           transitionDelay: `${delay}ms`,
@@ -204,12 +206,14 @@ function BentoLightTemplate({ portfolio }) {
   } = portfolio;
 
   const [scrollProgress, setScrollProgress] = useState(0);
+
   const [cursor, setCursor] = useState({
     x: -100,
     y: -100,
   });
 
   /* Scroll progress */
+
   useEffect(() => {
     const updateScroll = () => {
       const scrollTop = window.scrollY;
@@ -235,6 +239,7 @@ function BentoLightTemplate({ portfolio }) {
   }, []);
 
   /* Cursor glow */
+
   useEffect(() => {
     const move = (event) => {
       setCursor({
@@ -288,6 +293,26 @@ function BentoLightTemplate({ portfolio }) {
           }
         }
 
+        @keyframes bentoBlink {
+          0%, 100% {
+            opacity: .35;
+          }
+
+          50% {
+            opacity: 1;
+          }
+        }
+
+        @keyframes bentoRotate {
+          from {
+            transform: rotate(0deg);
+          }
+
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
         .bento-float {
           animation: bentoFloat 6s ease-in-out infinite;
         }
@@ -298,6 +323,14 @@ function BentoLightTemplate({ portfolio }) {
 
         .bento-marquee {
           animation: bentoMarquee 22s linear infinite;
+        }
+
+        .bento-blink {
+          animation: bentoBlink 2s ease-in-out infinite;
+        }
+
+        .bento-rotate {
+          animation: bentoRotate 18s linear infinite;
         }
 
         .bento-project-image {
@@ -330,6 +363,44 @@ function BentoLightTemplate({ portfolio }) {
 
         .bento-skill:hover {
           transform: translateY(-4px);
+        }
+
+        .bento-stat {
+          transition:
+            transform 300ms ease,
+            box-shadow 300ms ease;
+        }
+
+        .bento-stat:hover {
+          transform: translateY(-5px);
+          box-shadow:
+            0 18px 40px rgba(15, 23, 42, .08);
+        }
+
+        .bento-line {
+          position: relative;
+          overflow: hidden;
+        }
+
+        .bento-line::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          width: 100%;
+          height: 1px;
+          background: currentColor;
+          transform: scaleX(.15);
+          transform-origin: left;
+          opacity: .25;
+          transition:
+            transform 500ms ease,
+            opacity 500ms ease;
+        }
+
+        .bento-line:hover::after {
+          transform: scaleX(1);
+          opacity: .6;
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -365,7 +436,8 @@ function BentoLightTemplate({ portfolio }) {
         style={{
           left: cursor.x,
           top: cursor.y,
-          transition: "left 120ms ease-out, top 120ms ease-out",
+          transition:
+            "left 120ms ease-out, top 120ms ease-out",
         }}
       />
 
@@ -373,7 +445,7 @@ function BentoLightTemplate({ portfolio }) {
         style={font}
         className="relative min-h-screen overflow-x-hidden bg-[#eef0f5] p-3 text-slate-700 sm:p-6"
       >
-        {/* Ambient background elements */}
+        {/* Ambient background */}
 
         <div className="pointer-events-none fixed left-[8%] top-[15%] z-0 h-32 w-32 rounded-full bg-indigo-300/20 blur-3xl bento-pulse" />
 
@@ -385,39 +457,92 @@ function BentoLightTemplate({ portfolio }) {
         <main className="relative z-10 mx-auto grid max-w-6xl gap-3 sm:gap-4 md:grid-cols-6">
 
           {/* =================================================
-              1. HERO / PROFILE
+              1. HERO
           ================================================= */}
 
           <Reveal
-            className={`${tile} flex flex-col justify-between bg-indigo-600 text-white md:col-span-4 md:min-h-[22rem]`}
+            className={`${tile} flex flex-col justify-between bg-indigo-600 text-white md:col-span-4 md:min-h-[24rem]`}
             direction="left"
           >
-            <div>
-              <p className="text-sm text-indigo-200">
-                {role}
-              </p>
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-sm text-indigo-200">
+                  {role}
+                </p>
 
-              <p className="mt-3 text-xs uppercase tracking-widest text-indigo-200">
-                Portfolio
-              </p>
+                <p className="mt-3 text-xs uppercase tracking-widest text-indigo-200">
+                  Portfolio
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 backdrop-blur">
+                <span className="bento-blink h-2 w-2 rounded-full bg-emerald-300" />
+                <span className="text-xs text-indigo-100">
+                  Available
+                </span>
+              </div>
             </div>
 
-            <h1 className="mt-10 break-words text-5xl font-bold leading-none sm:text-7xl">
-              <Title>{name}</Title>
-            </h1>
+            <div className="mt-10">
+              <p className="mb-3 text-xs uppercase tracking-[0.25em] text-indigo-200">
+                Hello, I’m
+              </p>
+
+              <h1 className="break-words text-5xl font-bold leading-none sm:text-7xl">
+                <Title>{name}</Title>
+              </h1>
+
+              <div className="mt-6 flex flex-wrap gap-2">
+                <span className="rounded-full bg-white px-4 py-2 text-xs font-medium text-indigo-600">
+                  {role}
+                </span>
+
+                <span className="rounded-full border border-white/30 px-4 py-2 text-xs text-white/80">
+                  Digital Portfolio
+                </span>
+              </div>
+            </div>
           </Reveal>
 
+          {/* HERO SIDE INFORMATION */}
+
           <Reveal
-            className="aspect-square overflow-hidden rounded-3xl bg-slate-300 md:col-span-2 md:aspect-auto"
+            className="md:col-span-2"
             direction="right"
             delay={100}
           >
-            <div className="h-full overflow-hidden">
-              <Img
-                src={profileImage}
-                alt={`Portrait of ${name}`}
-                className="h-full w-full transition duration-1000 hover:scale-105"
-              />
+            <div className="grid h-full gap-3">
+              <div className="aspect-square overflow-hidden rounded-3xl bg-slate-300">
+                <div className="h-full overflow-hidden">
+                  <Img
+                    src={profileImage}
+                    alt={`Portrait of ${name}`}
+                    className="h-full w-full transition duration-1000 hover:scale-105"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bento-stat rounded-3xl bg-white p-5">
+                  <p className="text-3xl font-bold text-slate-900">
+                    {projects?.length || 0}
+                  </p>
+
+                  <p className="mt-1 text-xs uppercase tracking-wider text-slate-400">
+                    Projects
+                  </p>
+                </div>
+
+                <div className="bento-stat rounded-3xl bg-amber-100 p-5">
+                  <p className="text-3xl font-bold text-slate-900">
+                    {skills?.length || 0}
+                  </p>
+
+                  <p className="mt-1 text-xs uppercase tracking-wider text-slate-500">
+                    Skills
+                  </p>
+                </div>
+              </div>
             </div>
           </Reveal>
 
@@ -440,9 +565,23 @@ function BentoLightTemplate({ portfolio }) {
             <p className="text-xl leading-relaxed text-slate-700 sm:text-2xl">
               {about}
             </p>
+
+            <div className="mt-8 flex flex-wrap gap-2">
+              <span className="rounded-full bg-slate-100 px-4 py-2 text-xs text-slate-500">
+                Problem Solver
+              </span>
+
+              <span className="rounded-full bg-indigo-50 px-4 py-2 text-xs text-indigo-600">
+                Creative Thinker
+              </span>
+
+              <span className="rounded-full bg-amber-100 px-4 py-2 text-xs text-amber-700">
+                Continuous Learner
+              </span>
+            </div>
           </Reveal>
 
-          {/* Skills preview */}
+          {/* Skills */}
 
           {skills?.length > 0 && (
             <Reveal
@@ -450,23 +589,34 @@ function BentoLightTemplate({ portfolio }) {
               direction="right"
               delay={100}
             >
-              <h2 className="mb-3 text-sm font-medium text-indigo-600">
-                Skills
-              </h2>
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-medium text-indigo-600">
+                  Skills
+                </h2>
 
-              <ul className="flex flex-wrap gap-2">
+                <span className="text-xs text-slate-400">
+                  Toolkit
+                </span>
+              </div>
+
+              <ul className="mt-5 flex flex-wrap gap-2">
                 {skills.map((skill, index) => (
                   <li
                     key={`${skill}-${index}`}
                     className="bento-skill rounded-full bg-slate-100 px-3 py-1.5 text-sm"
-                    style={{
-                      transitionDelay: `${index * 40}ms`,
-                    }}
                   >
                     {skill}
                   </li>
                 ))}
               </ul>
+
+              <div className="mt-7 border-t border-slate-100 pt-5">
+                <p className="text-xs leading-relaxed text-slate-400">
+                  A flexible collection of technologies,
+                  tools, and creative skills used to turn ideas
+                  into useful experiences.
+                </p>
+              </div>
             </Reveal>
           )}
 
@@ -498,6 +648,14 @@ function BentoLightTemplate({ portfolio }) {
                 </p>
               ))}
             </div>
+
+            <div className="mt-8 flex items-center gap-3">
+              <div className="h-px flex-1 bg-slate-900/20" />
+
+              <span className="text-xs uppercase tracking-widest text-slate-500">
+                Think · Design · Build
+              </span>
+            </div>
           </Reveal>
 
           <Reveal
@@ -518,6 +676,11 @@ function BentoLightTemplate({ portfolio }) {
                 </span>
               </div>
             )}
+
+            <div className="mt-4 flex items-center justify-between text-xs text-slate-400">
+              <span>VISUAL LANGUAGE</span>
+              <span>01 / 04</span>
+            </div>
           </Reveal>
 
           {/* =================================================
@@ -528,14 +691,21 @@ function BentoLightTemplate({ portfolio }) {
             className={`${tile} md:col-span-6`}
             direction="up"
           >
-            <div className="mb-8">
-              <h2 className="text-sm font-medium text-indigo-600">
-                Core values
-              </h2>
+            <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+              <div>
+                <h2 className="text-sm font-medium text-indigo-600">
+                  Core values
+                </h2>
 
-              <h3 className="mt-2 text-3xl font-bold text-slate-900 sm:text-4xl">
-                <Title>What guides my work.</Title>
-              </h3>
+                <h3 className="mt-2 text-3xl font-bold text-slate-900 sm:text-4xl">
+                  <Title>What guides my work.</Title>
+                </h3>
+              </div>
+
+              <p className="max-w-xs text-sm leading-relaxed text-slate-400">
+                Principles that influence how I approach
+                every idea, project, and experience.
+              </p>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
@@ -549,14 +719,20 @@ function BentoLightTemplate({ portfolio }) {
                     />
                   )}
 
-                  <div className="p-5">
-                    <span className="text-xs font-medium text-indigo-600">
-                      01
-                    </span>
+                  <div className="flex items-end justify-between p-5">
+                    <div>
+                      <span className="text-xs font-medium text-indigo-600">
+                        01
+                      </span>
 
-                    <h4 className="mt-1 text-xl font-bold text-slate-900">
-                      Purpose
-                    </h4>
+                      <h4 className="mt-1 text-xl font-bold text-slate-900">
+                        Purpose
+                      </h4>
+                    </div>
+
+                    <span className="text-2xl text-slate-300">
+                      ↗
+                    </span>
                   </div>
                 </div>
               </Tilt>
@@ -571,14 +747,20 @@ function BentoLightTemplate({ portfolio }) {
                     />
                   )}
 
-                  <div className="p-5">
-                    <span className="text-xs font-medium text-indigo-600">
-                      02
-                    </span>
+                  <div className="flex items-end justify-between p-5">
+                    <div>
+                      <span className="text-xs font-medium text-indigo-600">
+                        02
+                      </span>
 
-                    <h4 className="mt-1 text-xl font-bold text-slate-900">
-                      Creativity
-                    </h4>
+                      <h4 className="mt-1 text-xl font-bold text-slate-900">
+                        Creativity
+                      </h4>
+                    </div>
+
+                    <span className="text-2xl text-slate-300">
+                      ↗
+                    </span>
                   </div>
                 </div>
               </Tilt>
@@ -604,9 +786,15 @@ function BentoLightTemplate({ portfolio }) {
                 </h3>
 
                 <p className="mt-4 max-w-md leading-relaxed text-slate-300">
-                  A simple process that transforms an initial thought
-                  into a focused and meaningful final result.
+                  A simple process that transforms an initial
+                  thought into a focused and meaningful final
+                  result.
                 </p>
+
+                <div className="mt-7 flex items-center gap-3 text-xs uppercase tracking-widest text-slate-500">
+                  <span className="h-2 w-2 rounded-full bg-indigo-400" />
+                  Process driven
+                </div>
               </div>
 
               <div className="grid gap-3 sm:grid-cols-3">
@@ -636,9 +824,6 @@ function BentoLightTemplate({ portfolio }) {
                   <Tilt key={item.number}>
                     <div
                       className={`rounded-2xl p-5 ${item.className}`}
-                      style={{
-                        transitionDelay: `${index * 100}ms`,
-                      }}
                     >
                       <span className="text-sm opacity-60">
                         {item.number}
@@ -665,7 +850,7 @@ function BentoLightTemplate({ portfolio }) {
           {projects?.length > 0 && (
             <>
               <Reveal
-                className={`${tile} md:col-span-6`}
+                className={`${tile} md:col-span-4`}
                 direction="up"
               >
                 <h2 className="text-sm font-medium text-indigo-600">
@@ -675,6 +860,34 @@ function BentoLightTemplate({ portfolio }) {
                 <h3 className="mt-2 text-3xl font-bold text-slate-900 sm:text-4xl">
                   <Title>Selected work.</Title>
                 </h3>
+
+                <p className="mt-4 max-w-md text-sm leading-relaxed text-slate-400">
+                  A selection of projects that represent my
+                  approach to design, development, and problem
+                  solving.
+                </p>
+              </Reveal>
+
+              <Reveal
+                className="flex items-center justify-center rounded-3xl bg-indigo-600 p-6 text-white md:col-span-2"
+                direction="right"
+                delay={100}
+              >
+                <div className="text-center">
+                  <div className="bento-rotate mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-white/20">
+                    <span className="text-2xl">
+                      ✦
+                    </span>
+                  </div>
+
+                  <p className="mt-5 text-xs uppercase tracking-widest text-indigo-200">
+                    Selected collection
+                  </p>
+
+                  <p className="mt-2 text-2xl font-bold">
+                    {projects.length} projects
+                  </p>
+                </div>
               </Reveal>
 
               {projects.slice(0, 3).map((project, index) => (
@@ -693,8 +906,6 @@ function BentoLightTemplate({ portfolio }) {
                         alt={project.title}
                         className="bento-project-image absolute inset-0 h-full w-full"
                       />
-
-                      {/* Dark overlay */}
 
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-70 transition duration-500 group-hover:opacity-90" />
 
@@ -734,17 +945,28 @@ function BentoLightTemplate({ portfolio }) {
               />
 
               <div className="p-6 sm:p-10">
-                <h2 className="mb-2 text-sm font-medium text-indigo-600">
-                  Case study
-                </h2>
+                <div className="flex items-center justify-between">
+                  <h2 className="text-sm font-medium text-indigo-600">
+                    Case study
+                  </h2>
 
-                <h3 className="text-3xl font-bold text-slate-900">
+                  <span className="text-xs text-slate-400">
+                    01
+                  </span>
+                </div>
+
+                <h3 className="mt-2 text-3xl font-bold text-slate-900">
                   <Title>{caseStudy.title}</Title>
                 </h3>
 
                 <p className="mt-4 leading-relaxed text-slate-600">
                   {caseStudy.description}
                 </p>
+
+                <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-xs text-slate-500">
+                  View project
+                  <span>↗</span>
+                </div>
               </div>
             </Reveal>
           )}
@@ -767,6 +989,11 @@ function BentoLightTemplate({ portfolio }) {
                   <h3 className="mt-2 text-3xl font-bold text-slate-900 sm:text-4xl">
                     <Title>Tools behind the work.</Title>
                   </h3>
+
+                  <p className="mt-4 max-w-md text-sm leading-relaxed text-slate-400">
+                    Technologies and skills that help transform
+                    ideas into functional digital experiences.
+                  </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -832,9 +1059,29 @@ function BentoLightTemplate({ portfolio }) {
                   </h3>
 
                   <p className="mt-4 max-w-md leading-relaxed text-slate-600">
-                    A balance of simplicity, personality, structure,
-                    and carefully chosen details.
+                    A balance of simplicity, personality,
+                    structure, and carefully chosen details.
                   </p>
+
+                  <div className="mt-7 grid grid-cols-2 gap-2">
+                    <div className="rounded-2xl bg-slate-100 p-4">
+                      <p className="text-xs text-slate-400">
+                        STYLE
+                      </p>
+                      <p className="mt-2 text-sm font-medium text-slate-900">
+                        Minimal
+                      </p>
+                    </div>
+
+                    <div className="rounded-2xl bg-amber-100 p-4">
+                      <p className="text-xs text-slate-500">
+                        APPROACH
+                      </p>
+                      <p className="mt-2 text-sm font-medium text-slate-900">
+                        Intentional
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
                 <Wipe
@@ -847,11 +1094,40 @@ function BentoLightTemplate({ portfolio }) {
           )}
 
           {/* =================================================
+              EXTRA CONTACT INTRO CARD
+          ================================================= */}
+
+          <Reveal
+            className="flex flex-col justify-between rounded-3xl bg-white p-6 md:col-span-2 sm:p-8"
+            direction="left"
+          >
+            <div>
+              <p className="text-xs uppercase tracking-widest text-slate-400">
+                Open for
+              </p>
+
+              <h3 className="mt-3 text-3xl font-bold text-slate-900">
+                New ideas.
+              </h3>
+            </div>
+
+            <div className="mt-10">
+              <div className="mb-3 h-2 w-2 rounded-full bg-emerald-400" />
+
+              <p className="text-sm leading-relaxed text-slate-500">
+                Freelance projects, collaborations,
+                creative opportunities, and interesting
+                conversations.
+              </p>
+            </div>
+          </Reveal>
+
+          {/* =================================================
               10. CONTACT
           ================================================= */}
 
           <Reveal
-            className={`${tile} bg-indigo-600 text-white md:col-span-6`}
+            className={`${tile} bg-indigo-600 text-white md:col-span-4`}
             direction="zoom"
           >
             <div
@@ -868,8 +1144,8 @@ function BentoLightTemplate({ portfolio }) {
                 </h3>
 
                 <p className="mt-4 max-w-md text-indigo-100">
-                  Have an idea, project, or opportunity? Let's start
-                  a conversation.
+                  Have an idea, project, or opportunity? Let's
+                  start a conversation.
                 </p>
               </div>
 
@@ -891,6 +1167,37 @@ function BentoLightTemplate({ portfolio }) {
             </div>
           </Reveal>
 
+          {/* CONTACT SIDE CARD */}
+
+          <Reveal
+            className="flex flex-col justify-between rounded-3xl bg-amber-100 p-6 md:col-span-2 sm:p-8"
+            direction="right"
+          >
+            <div>
+              <p className="text-xs uppercase tracking-widest text-slate-500">
+                Let's connect
+              </p>
+
+              <div className="mt-5 h-16 w-16 rounded-full bg-indigo-600 p-1">
+                <div className="flex h-full w-full items-center justify-center rounded-full bg-amber-100">
+                  <span className="text-xl text-indigo-600">
+                    ↗
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-10">
+              <p className="text-2xl font-bold text-slate-900">
+                Start a conversation.
+              </p>
+
+              <p className="mt-2 text-sm leading-relaxed text-slate-500">
+                Good ideas usually begin with a simple message.
+              </p>
+            </div>
+          </Reveal>
+
           {/* =================================================
               11. THANK YOU / FOOTER
           ================================================= */}
@@ -908,11 +1215,27 @@ function BentoLightTemplate({ portfolio }) {
                 <Title>Thanks for stopping by.</Title>
               </h2>
 
-              <p className="mt-3 text-sm text-slate-500">
-                © {new Date().getFullYear()} {name}. All rights reserved.
+              <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-slate-500">
+                Built with intention, curiosity, and a love for
+                creating meaningful digital experiences.
               </p>
+
+              <div className="mx-auto mt-7 flex max-w-md items-center justify-between border-t border-slate-100 pt-5 text-xs text-slate-400">
+                <span>
+                  © {new Date().getFullYear()} {name}
+                </span>
+
+                <span>
+                  {role}
+                </span>
+
+                <span>
+                  Back to top ↑
+                </span>
+              </div>
             </footer>
           </Reveal>
+
         </main>
       </div>
     </>
