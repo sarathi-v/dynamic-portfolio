@@ -4670,3 +4670,63 @@ body {
   }
 
 }
+/* ===== Publish status ===== */
+
+.dashboard-status {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.dashboard-status-published {
+  background: rgba(34, 197, 94, 0.15);
+  color: #16a34a;
+}
+
+.dashboard-status-draft {
+  background: rgba(234, 179, 8, 0.18);
+  color: #a16207;
+}
+
+.dashboard-publish-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.dashboard-publish-button,
+.dashboard-copy-button {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.dashboard-publish-button {
+  background: #7657ff;
+  color: #fff;
+}
+
+.dashboard-publish-button.unpublish {
+  background: transparent;
+  color: inherit;
+  border-color: rgba(128, 128, 128, 0.4);
+}
+
+.dashboard-copy-button {
+  background: transparent;
+  color: inherit;
+  border-color: rgba(128, 128, 128, 0.4);
+}
+
+.dashboard-publish-button:hover,
+.dashboard-copy-button:hover {
+  transform: translateY(-1px);
+  opacity: 0.9;
+}

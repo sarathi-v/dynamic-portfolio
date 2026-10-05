@@ -5,6 +5,7 @@ function Dashboard() {
   const navigate = useNavigate();
 
   const [portfolios, setPortfolios] = useState([]);
+  const [copiedId, setCopiedId] = useState(null);
 
   useEffect(() => {
     const savedPortfolios =
@@ -12,6 +13,15 @@ function Dashboard() {
 
     setPortfolios(savedPortfolios);
   }, []);
+
+  function savePortfolios(updatedPortfolios) {
+    localStorage.setItem(
+      "portfolios",
+      JSON.stringify(updatedPortfolios)
+    );
+
+    setPortfolios(updatedPortfolios);
+  }
 
   function deletePortfolio(id) {
     const shouldDelete = window.confirm(
@@ -26,12 +36,7 @@ function Dashboard() {
       (portfolio) => portfolio.id !== id
     );
 
-    localStorage.setItem(
-      "portfolios",
-      JSON.stringify(updatedPortfolios)
-    );
-
-    setPortfolios(updatedPortfolios);
+    savePortfolios(updatedPortfolios);
   }
 
   function editPortfolio(portfolio) {
@@ -44,10 +49,54 @@ function Dashboard() {
   }
 
   function viewPortfolio(portfolio) {
-    // Opens the portfolio as a full page in a new tab.
-    // Later this URL will become the real public link.
-    window.open(`/portfolio/${portfolio.id}`, "_blank", "noopener");
+    // Published portfolios open normally.
+    // Drafts open in "preview" mode, which only the owner uses.
+    const url =
+      portfolio.status === "published"
+        ? `/portfolio/${portfolio.id}`
+        : `/portfolio/${portfolio.id}?preview=true`;
+
+    window.open(url, "_blank", "noopener");
   }
+
+  function togglePublish(id) {
+    const updatedPortfolios = portfolios.map((portfolio) => {
+      if (portfolio.id !== id) {
+        return portfolio;
+      }
+
+      const isPublished = portfolio.status === "published";
+
+      return {
+        ...portfolio,
+        status: isPublished ? "draft" : "published",
+        publishedAt: isPublished
+          ? null
+          : new Date().toISOString(),
+      };
+    });
+
+    savePortfolios(updatedPortfolios);
+  }
+
+  async function copyLink(id) {
+    const link = `${window.location.origin}/portfolio/${id}`;
+
+    try {
+      await navigator.clipboard.writeText(link);
+      setCopiedId(id);
+
+      setTimeout(() => {
+        setCopiedId(null);
+      }, 2000);
+    } catch {
+      window.prompt("Copy your portfolio link:", link);
+    }
+  }
+
+  const publishedCount = portfolios.filter(
+    (portfolio) => portfolio.status === "published"
+  ).length;
 
   return (
     <main className="dashboard-page">
@@ -110,9 +159,9 @@ function Dashboard() {
             </div>
 
             <div>
-              <span>AI Ready</span>
+              <span>Published</span>
               <strong>
-                {portfolios.length > 0 ? "Yes" : "—"}
+                {portfolios.length > 0 ? publishedCount : "—"}
               </strong>
             </div>
 
@@ -198,97 +247,68 @@ function Dashboard() {
 
             <div className="dashboard-grid">
 
-              {portfolios.map((portfolio) => (
+              {portfolios.map((portfolio) => {
+                const isPublished =
+                  portfolio.status === "published";
 
-                <article
-                  className="dashboard-portfolio-card"
-                  key={portfolio.id}
-                >
-
-                  {/* CARD PREVIEW */}
-
-                  <div
-                    className={`dashboard-card-preview ${
-                      portfolio.darkMode
-                        ? "dashboard-preview-dark"
-                        : ""
-                    }`}
+                return (
+                  <article
+                    className="dashboard-portfolio-card"
+                    key={portfolio.id}
                   >
 
-                    <div className="dashboard-preview-top">
+                    {/* CARD PREVIEW */}
 
-                      <span className="dashboard-template-label">
-                        {portfolio.template || "modern"}
-                      </span>
+                    <div
+                      className={`dashboard-card-preview ${
+                        portfolio.darkMode
+                          ? "dashboard-preview-dark"
+                          : ""
+                      }`}
+                    >
 
-                      <span className="dashboard-preview-dot">
-                        ●
-                      </span>
+                      <div className="dashboard-preview-top">
 
-                    </div>
+                        <span className="dashboard-template-label">
+                          {portfolio.template || "modern"}
+                        </span>
 
-                    <div className="dashboard-preview-profile">
-
-                      {portfolio.profileImage ? (
-                        <img
-                          src={portfolio.profileImage}
-                          alt="Profile"
-                          className="dashboard-profile-image"
-                        />
-                      ) : (
-                        <div
-                          className="dashboard-avatar"
-                          style={{
-                            backgroundColor:
-                              portfolio.themeColor ||
-                              "#7657ff",
-                          }}
+                        <span
+                          className={
+                            isPublished
+                              ? "dashboard-status dashboard-status-published"
+                              : "dashboard-status dashboard-status-draft"
+                          }
                         >
-                          {portfolio.name
-                            ? portfolio.name
-                                .charAt(0)
-                                .toUpperCase()
-                            : "Y"}
-                        </div>
-                      )}
+                          {isPublished ? "Published" : "Draft"}
+                        </span>
 
-                      <h3>
-                        {portfolio.name ||
-                          "My Portfolio"}
-                      </h3>
+                      </div>
 
-                      <p>
-                        {portfolio.title ||
-                          "Professional Portfolio"}
-                      </p>
+                      <div className="dashboard-preview-profile">
 
-                    </div>
-
-                    <div className="dashboard-preview-lines">
-
-                      <div></div>
-                      <div></div>
-                      <div></div>
-
-                    </div>
-
-                    <div className="dashboard-preview-projects">
-
-                      <span></span>
-                      <span></span>
-                      <span></span>
-
-                    </div>
-
-                  </div>
-
-                  {/* CARD CONTENT */}
-
-                  <div className="dashboard-card-content">
-
-                    <div className="dashboard-card-title">
-
-                      <div>
+                        {portfolio.profileImage ? (
+                          <img
+                            src={portfolio.profileImage}
+                            alt="Profile"
+                            className="dashboard-profile-image"
+                          />
+                        ) : (
+                          <div
+                            className="dashboard-avatar"
+                            style={{
+                              backgroundColor:
+                                portfolio.themeColor ||
+                                "#7657ff",
+                            }}
+                          >
+                            {portfolio.name
+                              ? portfolio.name
+                                  .charAt(0)
+                                  .toUpperCase()
+                              : "Y"}
+                          </div>
+                        )}
 
                         <h3>
                           {portfolio.name ||
@@ -302,86 +322,158 @@ function Dashboard() {
 
                       </div>
 
-                      <div
-                        className="dashboard-color-dot"
-                        style={{
-                          backgroundColor:
-                            portfolio.themeColor ||
-                            "#222",
-                        }}
-                      ></div>
+                      <div className="dashboard-preview-lines">
+
+                        <div></div>
+                        <div></div>
+                        <div></div>
+
+                      </div>
+
+                      <div className="dashboard-preview-projects">
+
+                        <span></span>
+                        <span></span>
+                        <span></span>
+
+                      </div>
 
                     </div>
 
-                    <div className="dashboard-card-meta">
+                    {/* CARD CONTENT */}
 
-                      <span>
-                        ◈{" "}
-                        {portfolio.template ||
-                          "Modern"}
-                      </span>
+                    <div className="dashboard-card-content">
 
-                      <span>
-                        ●{" "}
-                        {portfolio.projects?.length ||
-                          0}{" "}
-                        projects
-                      </span>
+                      <div className="dashboard-card-title">
+
+                        <div>
+
+                          <h3>
+                            {portfolio.name ||
+                              "My Portfolio"}
+                          </h3>
+
+                          <p>
+                            {portfolio.title ||
+                              "Professional Portfolio"}
+                          </p>
+
+                        </div>
+
+                        <div
+                          className="dashboard-color-dot"
+                          style={{
+                            backgroundColor:
+                              portfolio.themeColor ||
+                              "#222",
+                          }}
+                        ></div>
+
+                      </div>
+
+                      <div className="dashboard-card-meta">
+
+                        <span>
+                          ◈{" "}
+                          {portfolio.template ||
+                            "Modern"}
+                        </span>
+
+                        <span>
+                          ●{" "}
+                          {portfolio.projects?.length ||
+                            0}{" "}
+                          projects
+                        </span>
+
+                      </div>
+
+                      <div className="dashboard-card-date">
+
+                        Updated{" "}
+                        {portfolio.updatedAt
+                          ? new Date(
+                              portfolio.updatedAt
+                            ).toLocaleDateString()
+                          : "Recently"}
+
+                      </div>
+
+                      <div className="dashboard-card-actions">
+
+                        <button
+                          type="button"
+                          className="dashboard-edit-button"
+                          onClick={() =>
+                            editPortfolio(portfolio)
+                          }
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          type="button"
+                          className="dashboard-view-button"
+                          onClick={() =>
+                            viewPortfolio(portfolio)
+                          }
+                        >
+                          {isPublished ? "View" : "Preview"}
+                          <span>↗</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          className="dashboard-delete-button"
+                          onClick={() =>
+                            deletePortfolio(portfolio.id)
+                          }
+                          aria-label="Delete portfolio"
+                        >
+                          ×
+                        </button>
+
+                      </div>
+
+                      <div className="dashboard-publish-row">
+
+                        <button
+                          type="button"
+                          className={
+                            isPublished
+                              ? "dashboard-publish-button unpublish"
+                              : "dashboard-publish-button"
+                          }
+                          onClick={() =>
+                            togglePublish(portfolio.id)
+                          }
+                        >
+                          {isPublished
+                            ? "Unpublish"
+                            : "Publish"}
+                        </button>
+
+                        {isPublished && (
+                          <button
+                            type="button"
+                            className="dashboard-copy-button"
+                            onClick={() =>
+                              copyLink(portfolio.id)
+                            }
+                          >
+                            {copiedId === portfolio.id
+                              ? "✓ Copied"
+                              : "Copy link"}
+                          </button>
+                        )}
+
+                      </div>
 
                     </div>
 
-                    <div className="dashboard-card-date">
-
-                      Updated{" "}
-                      {portfolio.updatedAt
-                        ? new Date(
-                            portfolio.updatedAt
-                          ).toLocaleDateString()
-                        : "Recently"}
-
-                    </div>
-
-                    <div className="dashboard-card-actions">
-
-                      <button
-                        type="button"
-                        className="dashboard-edit-button"
-                        onClick={() =>
-                          editPortfolio(portfolio)
-                        }
-                      >
-                        Edit
-                      </button>
-
-                      <button
-                        type="button"
-                        className="dashboard-view-button"
-                        onClick={() =>
-                          viewPortfolio(portfolio)
-                        }
-                      >
-                        View
-                        <span>↗</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        className="dashboard-delete-button"
-                        onClick={() =>
-                          deletePortfolio(portfolio.id)
-                        }
-                        aria-label="Delete portfolio"
-                      >
-                        ×
-                      </button>
-
-                    </div>
-
-                  </div>
-
-                </article>
-
-              ))}
+                  </article>
+                );
+              })}
 
               {/* CREATE NEW CARD */}
 

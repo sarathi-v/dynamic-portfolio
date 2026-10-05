@@ -194,7 +194,7 @@ function CreatePortfolio() {
       resumeName: formData.resume
         ? formData.resume.name
         : savedPortfolio?.resumeName || "",
-
+      status: savedPortfolio?.status || "draft",
       updatedAt: new Date().toISOString(),
     };
 
