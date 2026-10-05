@@ -44,14 +44,9 @@ function Dashboard() {
   }
 
   function viewPortfolio(portfolio) {
-    localStorage.setItem(
-      "selectedPortfolio",
-      JSON.stringify(portfolio)
-    );
-
-    alert(
-      "Public portfolio viewing will be connected during backend integration."
-    );
+    // Opens the portfolio as a full page in a new tab.
+    // Later this URL will become the real public link.
+    window.open(`/portfolio/${portfolio.id}`, "_blank", "noopener");
   }
 
   return (
