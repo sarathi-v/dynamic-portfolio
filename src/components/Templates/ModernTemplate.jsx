@@ -1,4 +1,4 @@
-import "./CreativeTemplate.css";
+import "./ModernTemplate.css";
 
 // Turns "React, Node.js, MongoDB" into ["React", "Node.js", "MongoDB"]
 function toList(value) {
@@ -12,7 +12,7 @@ function toList(value) {
   return [];
 }
 
-function CreativeTemplate({ portfolio = {} }) {
+function ModernTemplate({ portfolio = {} }) {
   const {
     name = "",
     title = "",
@@ -44,109 +44,88 @@ function CreativeTemplate({ portfolio = {} }) {
 
   return (
     <div
-      className={`ct-root ${darkMode ? "ct-dark" : "ct-light"}`}
-      style={{ "--ct-accent": themeColor }}
+      className={`mt-root ${darkMode ? "mt-dark" : "mt-light"}`}
+      style={{ "--mt-accent": themeColor }}
     >
       {/* HERO */}
-      <header className="ct-hero">
-        <div className="ct-orb ct-orb-one"></div>
-        <div className="ct-orb ct-orb-two"></div>
-        <div className="ct-orb ct-orb-three"></div>
+      <header className="mt-hero">
+        <div className="mt-hero-text">
+          <span className="mt-eyebrow">Hello, I'm</span>
+          <h1 className="mt-name">{displayName}</h1>
+          <h2 className="mt-title">{displayTitle}</h2>
 
-        <div className="ct-hero-content">
-          <span className="ct-tag">✦ {displayTitle}</span>
-
-          <h1 className="ct-name">{displayName}</h1>
-
-          <div className="ct-hero-actions">
+          <div className="mt-hero-actions">
             {email && (
-              <a className="ct-btn ct-btn-solid" href={`mailto:${email}`}>
-                Say Hello →
+              <a className="mt-btn mt-btn-primary" href={`mailto:${email}`}>
+                Contact Me
               </a>
             )}
             {website && (
               <a
-                className="ct-btn ct-btn-ghost"
+                className="mt-btn mt-btn-outline"
                 href={website}
                 target="_blank"
                 rel="noreferrer"
               >
-                My Website ↗
+                Visit Website
               </a>
             )}
           </div>
         </div>
 
-        <div className="ct-avatar-wrap">
+        <div className="mt-avatar-wrap">
           {profileImage ? (
-            <img className="ct-avatar" src={profileImage} alt={displayName} />
+            <img className="mt-avatar" src={profileImage} alt={displayName} />
           ) : (
-            <div className="ct-avatar ct-avatar-fallback">{initial}</div>
+            <div className="mt-avatar mt-avatar-fallback">{initial}</div>
           )}
         </div>
       </header>
 
       {/* ABOUT */}
-      <section className="ct-section">
-        <div className="ct-section-label">
-          <span>01</span>
-          <h2>About Me</h2>
-        </div>
-        <p className="ct-about">
+      <section className="mt-section">
+        <h3 className="mt-section-title">About</h3>
+        <p className="mt-about">
           {about || "Your about information will appear here."}
         </p>
       </section>
 
       {/* SKILLS */}
-      <section className="ct-section">
-        <div className="ct-section-label">
-          <span>02</span>
-          <h2>Skills</h2>
-        </div>
-
+      <section className="mt-section">
+        <h3 className="mt-section-title">Skills</h3>
         {skillList.length > 0 ? (
-          <div className="ct-skills">
+          <div className="mt-skills">
             {skillList.map((skill, index) => (
-              <span className="ct-skill" key={`${skill}-${index}`}>
+              <span className="mt-skill" key={`${skill}-${index}`}>
                 {skill}
               </span>
             ))}
           </div>
         ) : (
-          <p className="ct-about">Your skills will appear here.</p>
+          <p className="mt-about">Your skills will appear here.</p>
         )}
       </section>
 
       {/* PROJECTS */}
-      <section className="ct-section">
-        <div className="ct-section-label">
-          <span>03</span>
-          <h2>Selected Work</h2>
-        </div>
-
-        <div className="ct-projects">
+      <section className="mt-section">
+        <h3 className="mt-section-title">Projects</h3>
+        <div className="mt-projects">
           {projectList.map((project, index) => (
-            <article className="ct-card" key={index}>
-              <span className="ct-card-number">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-
-              <h3 className="ct-card-title">
+            <article className="mt-card" key={index}>
+              <h4 className="mt-card-title">
                 {project.name || `Project ${index + 1}`}
-              </h3>
-
-              <p className="ct-card-text">
+              </h4>
+              <p className="mt-card-text">
                 {project.description || "Project description will appear here."}
               </p>
-
               {project.link && (
                 <a
-                  className="ct-card-link"
+                  className="mt-card-link"
                   href={project.link}
                   target="_blank"
                   rel="noreferrer"
                 >
-                  View Project ↗
+                  View Project →
                 </a>
               )}
             </article>
@@ -156,17 +135,17 @@ function CreativeTemplate({ portfolio = {} }) {
 
       {/* CONTACT */}
       {(email || socialLinks.length > 0 || resumeName) && (
-        <section className="ct-section ct-contact">
-          <h2 className="ct-contact-title">Let's create something together.</h2>
+        <section className="mt-section mt-contact">
+          <h3 className="mt-section-title">Get In Touch</h3>
 
           {email && (
-            <a className="ct-contact-email" href={`mailto:${email}`}>
-              {email}
-            </a>
+            <div className="mt-contact-list">
+              <a href={`mailto:${email}`}>✉️ {email}</a>
+            </div>
           )}
 
           {socialLinks.length > 0 && (
-            <div className="ct-socials">
+            <div className="mt-socials">
               {socialLinks.map((link) => (
                 <a
                   key={link.label}
@@ -181,18 +160,18 @@ function CreativeTemplate({ portfolio = {} }) {
           )}
 
           {resumeName && (
-            <p className="ct-resume">
+            <p className="mt-about">
               📄 Resume: <strong>{resumeName}</strong>
             </p>
           )}
         </section>
       )}
 
-      <footer className="ct-footer">
-        © {new Date().getFullYear()} {displayName} · Built with Portfolio AI
+      <footer className="mt-footer">
+        © {new Date().getFullYear()} {displayName}. Built with Portfolio AI.
       </footer>
     </div>
   );
 }
 
-export default CreativeTemplate;
+export default ModernTemplate;

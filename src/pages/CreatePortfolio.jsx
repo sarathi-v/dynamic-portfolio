@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import TemplateRenderer from "../components/templates/TemplateRenderer";
+import TemplatePreviewFrame from "../components/TemplatePreviewFrame";
 
 function CreatePortfolio() {
   const location = useLocation();
@@ -236,10 +238,26 @@ function CreatePortfolio() {
     setStep(1);
   }
 
-  const skills = formData.skills
-    .split(",")
-    .map((skill) => skill.trim())
-    .filter((skill) => skill !== "");
+  // The single data object the templates read from.
+  // Same shape as what gets saved, so Form -> Template -> Backend all match.
+  const previewPortfolio = {
+    name: formData.name,
+    title: formData.title,
+    email: formData.email,
+    about: formData.about,
+    skills: formData.skills,
+    github: formData.github,
+    linkedin: formData.linkedin,
+    website: formData.website,
+    projects: formData.projects,
+    template: selectedTemplate,
+    themeColor,
+    darkMode,
+    profileImage,
+    resumeName: formData.resume
+      ? formData.resume.name
+      : savedPortfolio?.resumeName || "",
+  };
 
   const previewStyle = {
     "--theme-color": themeColor,
@@ -297,168 +315,15 @@ function CreatePortfolio() {
             </p>
           )}
 
-          <section className="portfolio-profile">
-
-            {profileImage ? (
-              <img
-                src={profileImage}
-                alt="Profile"
-                className="final-profile-image"
-              />
-            ) : (
-              <div
-                className="final-profile-avatar"
-                style={{
-                  backgroundColor: themeColor,
-                }}
-              >
-                {formData.name
-                  ? formData.name.charAt(0).toUpperCase()
-                  : "Y"}
-              </div>
-            )}
-
-            <p className="selected-template">
-              {selectedTemplate} template
-            </p>
-
-            <h2>
-              {formData.name || "Your Name"}
-            </h2>
-
-            <h3>
-              {formData.title || "Your Professional Title"}
-            </h3>
-
-            {formData.email && (
-              <p>{formData.email}</p>
-            )}
-
-            <div className="social-links">
-
-              {formData.github && (
-                <a
-                  href={formData.github}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  GitHub ↗
-                </a>
-              )}
-
-              {formData.linkedin && (
-                <a
-                  href={formData.linkedin}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  LinkedIn ↗
-                </a>
-              )}
-
-              {formData.website && (
-                <a
-                  href={formData.website}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Website ↗
-                </a>
-              )}
-
-            </div>
-
-          </section>
-
-          <section className="portfolio-section">
-
-            <h2>About Me</h2>
-
-            <p>
-              {formData.about ||
-                "Your about information will appear here."}
-            </p>
-
-          </section>
-
-          <section className="portfolio-section">
-
-            <h2>Skills</h2>
-
-            <div className="skill-list">
-
-              {skills.length > 0 ? (
-                skills.map((skill, index) => (
-                  <span
-                    className="skill-tag"
-                    key={index}
-                  >
-                    {skill}
-                  </span>
-                ))
-              ) : (
-                <p>Your skills will appear here.</p>
-              )}
-
-            </div>
-
-          </section>
-
-          <section className="portfolio-section">
-
-            <h2>Projects</h2>
-
-            <div className="portfolio-projects">
-
-              {formData.projects.map((project, index) => (
-                <div
-                  className="portfolio-project-card"
-                  key={index}
-                >
-
-                  <h3>
-                    {project.name ||
-                      `Project ${index + 1}`}
-                  </h3>
-
-                  <p>
-                    {project.description ||
-                      "Project description will appear here."}
-                  </p>
-
-                  {project.link && (
-                    <a
-                      href={project.link}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      View Project ↗
-                    </a>
-                  )}
-
-                </div>
-              ))}
-
-            </div>
-
-          </section>
-
-          {(formData.resume || savedPortfolio?.resumeName) && (
-            <section className="portfolio-section">
-
-              <h2>Resume</h2>
-
-              <p>
-                Resume uploaded:{" "}
-                <strong>
-                  {formData.resume
-                    ? formData.resume.name
-                    : savedPortfolio.resumeName}
-                </strong>
-              </p>
-
-            </section>
-          )}
+          <div
+            style={{
+              borderRadius: "16px",
+              overflow: "hidden",
+              border: "1px solid rgba(128, 128, 128, 0.25)",
+            }}
+          >
+            <TemplateRenderer portfolio={previewPortfolio} />
+          </div>
 
         </div>
       </main>
@@ -1286,200 +1151,7 @@ function CreatePortfolio() {
 
             </div>
 
-            <div className="live-preview-content">
-
-              <section className="live-profile">
-
-                {profileImage ? (
-                  <img
-                    src={profileImage}
-                    alt="Profile"
-                    className="live-profile-image"
-                  />
-                ) : (
-                  <div
-                    className="live-avatar"
-                    style={{
-                      backgroundColor: themeColor,
-                    }}
-                  >
-                    {formData.name
-                      ? formData.name.charAt(0).toUpperCase()
-                      : "Y"}
-                  </div>
-                )}
-
-                <span
-                  className="live-preview-role"
-                  style={{
-                    color: themeColor,
-                  }}
-                >
-                  {formData.title ||
-                    "Your Professional Title"}
-                </span>
-
-                <h1>
-                  {formData.name || "Your Name"}
-                </h1>
-
-                {formData.email && (
-                  <p>{formData.email}</p>
-                )}
-
-                <div className="live-social-links">
-
-                  {formData.github && (
-                    <a
-                      href={formData.github}
-                      target="_blank"
-                      rel="noreferrer"
-                      style={{
-                        color: themeColor,
-                      }}
-                    >
-                      GitHub ↗
-                    </a>
-                  )}
-
-                  {formData.linkedin && (
-                    <a
-                      href={formData.linkedin}
-                      target="_blank"
-                      rel="noreferrer"
-                      style={{
-                        color: themeColor,
-                      }}
-                    >
-                      LinkedIn ↗
-                    </a>
-                  )}
-
-                  {formData.website && (
-                    <a
-                      href={formData.website}
-                      target="_blank"
-                      rel="noreferrer"
-                      style={{
-                        color: themeColor,
-                      }}
-                    >
-                      Website ↗
-                    </a>
-                  )}
-
-                </div>
-
-              </section>
-
-              <section className="live-section">
-
-                <span
-                  className="live-section-number"
-                  style={{
-                    color: themeColor,
-                  }}
-                >
-                  01
-                </span>
-
-                <h2 style={{ color: themeColor }}>
-                  About Me
-                </h2>
-
-                <p>
-                  {formData.about ||
-                    "Your about information will appear here."}
-                </p>
-
-              </section>
-
-              <section className="live-section">
-
-                <span
-                  className="live-section-number"
-                  style={{
-                    color: themeColor,
-                  }}
-                >
-                  02
-                </span>
-
-                <h2 style={{ color: themeColor }}>
-                  Skills
-                </h2>
-
-                <div className="live-skills">
-
-                  {skills.length > 0 ? (
-                    skills.map((skill, index) => (
-                      <span
-                        key={index}
-                        style={{
-                          borderColor: themeColor,
-                        }}
-                      >
-                        {skill}
-                      </span>
-                    ))
-                  ) : (
-                    <p>
-                      Your skills will appear here.
-                    </p>
-                  )}
-
-                </div>
-
-              </section>
-
-              <section className="live-section">
-
-                <span
-                  className="live-section-number"
-                  style={{
-                    color: themeColor,
-                  }}
-                >
-                  03
-                </span>
-
-                <h2 style={{ color: themeColor }}>
-                  Projects
-                </h2>
-
-                <div className="live-projects">
-
-                  {formData.projects.map((project, index) => (
-                    <div
-                      className="live-project-card"
-                      key={index}
-                      style={{
-                        borderTopColor: themeColor,
-                      }}
-                    >
-
-                      <span className="live-project-number">
-                        0{index + 1}
-                      </span>
-
-                      <h3>
-                        {project.name ||
-                          `Project ${index + 1}`}
-                      </h3>
-
-                      <p>
-                        {project.description ||
-                          "Project description will appear here."}
-                      </p>
-
-                    </div>
-                  ))}
-
-                </div>
-
-              </section>
-
-            </div>
+            <TemplatePreviewFrame portfolio={previewPortfolio} />
 
           </div>
 

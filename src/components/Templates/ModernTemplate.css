@@ -1,0 +1,275 @@
+/* All classes are prefixed with "mt-" so they never clash with App.css */
+
+.mt-root {
+  --mt-bg: #ffffff;
+  --mt-surface: #f8fafc;
+  --mt-border: #e2e8f0;
+  --mt-text: #0f172a;
+  --mt-muted: #64748b;
+
+  background: var(--mt-bg);
+  color: var(--mt-text);
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  padding: 0 clamp(20px, 5vw, 64px);
+  line-height: 1.6;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.mt-root *,
+.mt-root *::before,
+.mt-root *::after {
+  box-sizing: border-box;
+}
+
+.mt-dark {
+  --mt-bg: #0b1020;
+  --mt-surface: #131a2e;
+  --mt-border: #232c47;
+  --mt-text: #f1f5f9;
+  --mt-muted: #94a3b8;
+}
+
+/* HERO */
+.mt-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 72px 0 56px;
+  border-bottom: 1px solid var(--mt-border);
+}
+
+.mt-eyebrow {
+  color: var(--mt-accent);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+.mt-name {
+  font-size: clamp(2.2rem, 6vw, 4rem);
+  line-height: 1.1;
+  margin: 8px 0;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.mt-title {
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  font-weight: 500;
+  color: var(--mt-accent);
+  margin: 0 0 12px;
+}
+
+.mt-location {
+  color: var(--mt-muted);
+  margin: 0 0 24px;
+}
+
+.mt-hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.mt-btn {
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mt-btn:hover {
+  transform: translateY(-2px);
+}
+
+.mt-btn-primary {
+  background: var(--mt-accent);
+  color: #fff;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--mt-accent) 35%, transparent);
+}
+
+.mt-btn-outline {
+  border: 1px solid var(--mt-border);
+  color: var(--mt-text);
+}
+
+.mt-avatar-wrap {
+  flex-shrink: 0;
+}
+
+.mt-avatar {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--mt-accent);
+  box-shadow: 0 0 0 8px color-mix(in srgb, var(--mt-accent) 15%, transparent);
+}
+
+.mt-avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  font-weight: 800;
+  color: #fff;
+  background: var(--mt-accent);
+}
+
+/* SECTIONS */
+.mt-section {
+  padding: 48px 0;
+  border-bottom: 1px solid var(--mt-border);
+}
+
+.mt-section-title {
+  font-size: 1.5rem;
+  margin: 0 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mt-section-title::before {
+  content: "";
+  width: 28px;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--mt-accent);
+}
+
+.mt-about {
+  max-width: 720px;
+  color: var(--mt-muted);
+  font-size: 1.05rem;
+  margin: 0;
+  white-space: pre-line;
+}
+
+/* SKILLS */
+.mt-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.mt-skill {
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--mt-accent) 12%, transparent);
+  color: var(--mt-accent);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* PROJECTS */
+.mt-projects {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.mt-card {
+  background: var(--mt-surface);
+  border: 1px solid var(--mt-border);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.mt-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--mt-accent);
+}
+
+.mt-card-title {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.mt-card-text {
+  margin: 0;
+  color: var(--mt-muted);
+  font-size: 0.95rem;
+}
+
+.mt-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.mt-card-tags span {
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--mt-border);
+  color: var(--mt-muted);
+}
+
+.mt-card-link {
+  margin-top: auto;
+  color: var(--mt-accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* CONTACT */
+.mt-contact-list,
+.mt-socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin-bottom: 16px;
+}
+
+.mt-contact-list a,
+.mt-socials a {
+  color: var(--mt-text);
+  text-decoration: none;
+}
+
+.mt-socials a {
+  padding: 8px 16px;
+  border: 1px solid var(--mt-border);
+  border-radius: 8px;
+  text-transform: capitalize;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.mt-socials a:hover {
+  border-color: var(--mt-accent);
+  color: var(--mt-accent);
+}
+
+.mt-footer {
+  text-align: center;
+  padding: 32px 0;
+  color: var(--mt-muted);
+  font-size: 0.85rem;
+}
+
+/* RESPONSIVE */
+@media (max-width: 720px) {
+  .mt-hero {
+    flex-direction: column-reverse;
+    text-align: center;
+    padding-top: 48px;
+  }
+
+  .mt-hero-actions {
+    justify-content: center;
+  }
+
+  .mt-avatar {
+    width: 150px;
+    height: 150px;
+  }
+}
