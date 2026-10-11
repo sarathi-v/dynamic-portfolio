@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./MinimalTemplate.css";
 
 // Turns "React, Node.js, MongoDB" into ["React", "Node.js", "MongoDB"]
@@ -29,9 +30,22 @@ function MinimalTemplate({ portfolio = {} }) {
     darkMode = false,
   } = portfolio;
 
-  const displayName = name || "Your Name";
-  const displayTitle = title || "Your Professional Title";
-  const initial = displayName.trim().charAt(0).toUpperCase() || "Y";
+  // Remembers which image URL failed, so a dead link shows the initials instead
+  const [failedImage, setFailedImage] = useState(null);
+  const showImage = profileImage && failedImage !== profileImage;
+
+  const displayName = name.trim() || "Your Name";
+  const displayTitle = title.trim() || "Your Professional Title";
+
+  const words = displayName.split(/\s+/);
+  const lastWord = words.length > 1 ? words.pop() : null;
+  const firstWords = words.join(" ");
+
+  const initials = displayName
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((word) => word.charAt(0).toUpperCase())
+    .join("");
 
   const skillList = toList(skills);
   const projectList = Array.isArray(projects) ? projects : [];
@@ -48,23 +62,55 @@ function MinimalTemplate({ portfolio = {} }) {
       style={{ "--mn-accent": themeColor }}
     >
       <div className="mn-container">
-        {/* HEADER */}
-        <header className="mn-header">
-          <div className="mn-header-text">
-            <h1 className="mn-name">{displayName}</h1>
-            <p className="mn-title">{displayTitle}</p>
-          </div>
-
-          {profileImage ? (
-            <img className="mn-avatar" src={profileImage} alt={displayName} />
-          ) : (
-            <div className="mn-avatar mn-avatar-fallback">{initial}</div>
+        {/* TOP BAR */}
+        <div className="mn-topbar">
+          <span>Portfolio — {new Date().getFullYear()}</span>
+          {email && (
+            <a href={`mailto:${email}`} className="mn-topbar-link">
+              {email}
+            </a>
           )}
+        </div>
+
+        {/* HERO */}
+        <header className="mn-hero">
+          <span className="mn-eyebrow">{displayTitle}</span>
+
+          <h1 className="mn-name">
+            {firstWords}
+            {firstWords && lastWord ? " " : ""}
+            {lastWord ? <em>{lastWord}</em> : null}
+          </h1>
+
+          <div className="mn-intro">
+            {showImage ? (
+              <img
+                className="mn-avatar"
+                src={profileImage}
+                alt={displayName}
+                onError={() => setFailedImage(profileImage)}
+              />
+            ) : (
+              <div className="mn-avatar mn-avatar-fallback">
+                {initials || "Y"}
+              </div>
+            )}
+
+            <p className="mn-lead">
+              {about
+                ? about.length > 190
+                  ? `${about.slice(0, 190).trim()}…`
+                  : about
+                : "Your introduction will appear here once you write your about section."}
+            </p>
+          </div>
         </header>
 
         {/* ABOUT */}
         <section className="mn-section">
-          <h2 className="mn-label">About</h2>
+          <h2 className="mn-label">
+            <span>01</span> About
+          </h2>
           <p className="mn-about">
             {about || "Your about information will appear here."}
           </p>
@@ -72,61 +118,85 @@ function MinimalTemplate({ portfolio = {} }) {
 
         {/* SKILLS */}
         <section className="mn-section">
-          <h2 className="mn-label">Skills</h2>
+          <h2 className="mn-label">
+            <span>02</span> Skills
+          </h2>
+
           {skillList.length > 0 ? (
             <p className="mn-skills">
               {skillList.map((skill, index) => (
                 <span key={`${skill}-${index}`}>
-                  {skill}
+                  <b>{skill}</b>
                   {index < skillList.length - 1 && (
-                    <i className="mn-dot"> / </i>
+                    <i className="mn-sep"> / </i>
                   )}
                 </span>
               ))}
             </p>
           ) : (
-            <p className="mn-about">Your skills will appear here.</p>
+            <p className="mn-muted">Your skills will appear here.</p>
           )}
         </section>
 
         {/* PROJECTS */}
         <section className="mn-section">
-          <h2 className="mn-label">Work</h2>
-          <div className="mn-projects">
-            {projectList.map((project, index) => (
-              <article className="mn-project" key={index}>
-                <span className="mn-project-number">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
+          <h2 className="mn-label">
+            <span>03</span> Selected work
+          </h2>
 
-                <div className="mn-project-body">
-                  <h3 className="mn-project-title">
-                    {project.name || `Project ${index + 1}`}
-                  </h3>
-                  <p className="mn-project-text">
-                    {project.description ||
-                      "Project description will appear here."}
-                  </p>
-                  {project.link && (
-                    <a
-                      className="mn-project-link"
-                      href={project.link}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      View project ↗
-                    </a>
-                  )}
-                </div>
-              </article>
-            ))}
+          <div className="mn-projects">
+            {projectList.map((project, index) => {
+              const content = (
+                <>
+                  <span className="mn-project-number">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+
+                  <div className="mn-project-body">
+                    <h3 className="mn-project-title">
+                      {project.name || `Project ${index + 1}`}
+                    </h3>
+                    <p className="mn-project-text">
+                      {project.description ||
+                        "Project description will appear here."}
+                    </p>
+                  </div>
+
+                  <span className="mn-project-arrow">
+                    {project.link ? "↗" : ""}
+                  </span>
+                </>
+              );
+
+              return project.link ? (
+                <a
+                  className="mn-project mn-project-linked"
+                  href={project.link}
+                  target="_blank"
+                  rel="noreferrer"
+                  key={index}
+                >
+                  {content}
+                </a>
+              ) : (
+                <article className="mn-project" key={index}>
+                  {content}
+                </article>
+              );
+            })}
           </div>
         </section>
 
         {/* CONTACT */}
         {(email || socialLinks.length > 0 || resumeName) && (
-          <section className="mn-section">
-            <h2 className="mn-label">Contact</h2>
+          <section className="mn-contact">
+            <h2 className="mn-label">
+              <span>04</span> Contact
+            </h2>
+
+            <p className="mn-contact-title">
+              Let's <em>talk</em>.
+            </p>
 
             {email && (
               <a className="mn-email" href={`mailto:${email}`}>
@@ -143,7 +213,7 @@ function MinimalTemplate({ portfolio = {} }) {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    {link.label} ↗
+                    {link.label} <span>↗</span>
                   </a>
                 ))}
               </div>
@@ -158,7 +228,10 @@ function MinimalTemplate({ portfolio = {} }) {
         )}
 
         <footer className="mn-footer">
-          © {new Date().getFullYear()} {displayName}
+          <span>
+            © {new Date().getFullYear()} {displayName}
+          </span>
+          <span>Built with Portfolio AI</span>
         </footer>
       </div>
     </div>
