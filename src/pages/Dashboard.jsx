@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import TemplateThumbnail from "../components/TemplateThumbnail";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -257,17 +258,13 @@ function Dashboard() {
                     key={portfolio.id}
                   >
 
-                    {/* CARD PREVIEW */}
+                    {/* CARD PREVIEW: live miniature of the real template */}
 
-                    <div
-                      className={`dashboard-card-preview ${
-                        portfolio.darkMode
-                          ? "dashboard-preview-dark"
-                          : ""
-                      }`}
-                    >
+                    <div className="dashboard-card-thumb">
 
-                      <div className="dashboard-preview-top">
+                      <TemplateThumbnail portfolio={portfolio} />
+
+                      <div className="dashboard-thumb-badges">
 
                         <span className="dashboard-template-label">
                           {portfolio.template || "modern"}
@@ -282,59 +279,6 @@ function Dashboard() {
                         >
                           {isPublished ? "Published" : "Draft"}
                         </span>
-
-                      </div>
-
-                      <div className="dashboard-preview-profile">
-
-                        {portfolio.profileImage ? (
-                          <img
-                            src={portfolio.profileImage}
-                            alt="Profile"
-                            className="dashboard-profile-image"
-                          />
-                        ) : (
-                          <div
-                            className="dashboard-avatar"
-                            style={{
-                              backgroundColor:
-                                portfolio.themeColor ||
-                                "#7657ff",
-                            }}
-                          >
-                            {portfolio.name
-                              ? portfolio.name
-                                  .charAt(0)
-                                  .toUpperCase()
-                              : "Y"}
-                          </div>
-                        )}
-
-                        <h3>
-                          {portfolio.name ||
-                            "My Portfolio"}
-                        </h3>
-
-                        <p>
-                          {portfolio.title ||
-                            "Professional Portfolio"}
-                        </p>
-
-                      </div>
-
-                      <div className="dashboard-preview-lines">
-
-                        <div></div>
-                        <div></div>
-                        <div></div>
-
-                      </div>
-
-                      <div className="dashboard-preview-projects">
-
-                        <span></span>
-                        <span></span>
-                        <span></span>
 
                       </div>
 

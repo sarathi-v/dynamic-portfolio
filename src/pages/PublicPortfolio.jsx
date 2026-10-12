@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import TemplateRenderer from "../components/templates/TemplateRenderer";
 
@@ -6,6 +7,20 @@ function PublicPortfolio() {
   const [searchParams] = useSearchParams();
 
   const isPreview = searchParams.get("preview") === "true";
+  const isEmbed = searchParams.get("embed") === "true";
+
+  // Inside a dashboard thumbnail there should be no scrollbar
+  useEffect(() => {
+    if (!isEmbed) return;
+
+    const html = document.documentElement;
+    const previousOverflow = html.style.overflow;
+    html.style.overflow = "hidden";
+
+    return () => {
+      html.style.overflow = previousOverflow;
+    };
+  }, [isEmbed]);
 
   // Temporary: read from localStorage. Later this becomes an API call.
   const portfolios = JSON.parse(localStorage.getItem("portfolios")) || [];
@@ -39,7 +54,7 @@ function PublicPortfolio() {
 
   return (
     <>
-      {!isPublished && (
+      {!isPublished && !isEmbed && (
         <div
           style={{
             position: "sticky",
