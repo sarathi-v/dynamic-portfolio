@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import "./CreativeTemplate.css";
 
 // Turns "React, Node.js, MongoDB" into ["React", "Node.js", "MongoDB"]
@@ -13,11 +13,44 @@ function toList(value) {
   return [];
 }
 
-// First word solid, last word italic serif, words in between outlined
-function getWordClass(index, total) {
-  if (total === 1 || index === total - 1) return "ct-w-accent";
-  if (index === 0) return "ct-w-solid";
-  return "ct-w-outline";
+/* ---------- Mouse interaction helpers ----------
+   They use ratios (0 to 1) instead of pixels, so they also work
+   when the template is scaled down inside the live preview. */
+
+function handleTilt(event) {
+  const el = event.currentTarget;
+  const rect = el.getBoundingClientRect();
+  const x = (event.clientX - rect.left) / rect.width;
+  const y = (event.clientY - rect.top) / rect.height;
+
+  el.style.setProperty("--mx", `${x * 100}%`);
+  el.style.setProperty("--my", `${y * 100}%`);
+  el.style.setProperty("--rx", `${(0.5 - y) * 9}deg`);
+  el.style.setProperty("--ry", `${(x - 0.5) * 11}deg`);
+}
+
+function resetTilt(event) {
+  const el = event.currentTarget;
+  el.style.removeProperty("--rx");
+  el.style.removeProperty("--ry");
+  el.style.removeProperty("--mx");
+  el.style.removeProperty("--my");
+}
+
+function handleMagnet(event) {
+  const el = event.currentTarget;
+  const rect = el.getBoundingClientRect();
+  const x = (event.clientX - rect.left) / rect.width - 0.5;
+  const y = (event.clientY - rect.top) / rect.height - 0.5;
+
+  el.style.setProperty("--tx", `${x * 16}px`);
+  el.style.setProperty("--ty", `${y * 12}px`);
+}
+
+function resetMagnet(event) {
+  const el = event.currentTarget;
+  el.style.removeProperty("--tx");
+  el.style.removeProperty("--ty");
 }
 
 function CreativeTemplate({ portfolio = {} }) {
@@ -37,7 +70,26 @@ function CreativeTemplate({ portfolio = {} }) {
     darkMode = false,
   } = portfolio;
 
-  // Remembers which image URL failed, so a dead link shows the avatar instead
+  // The glow that follows the cursor
+  const glowRef = useRef(null);
+
+  function handleRootMove(event) {
+    const glow = glowRef.current;
+    if (!glow) return;
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    glow.style.left = `${((event.clientX - rect.left) / rect.width) * 100}%`;
+    glow.style.top = `${((event.clientY - rect.top) / rect.height) * 100}%`;
+    glow.style.opacity = "1";
+  }
+
+  function handleRootLeave() {
+    if (glowRef.current) {
+      glowRef.current.style.opacity = "0";
+    }
+  }
+
+  // Remembers which image URL failed, so a dead link shows the initials instead
   const [failedImage, setFailedImage] = useState(null);
   const showImage = profileImage && failedImage !== profileImage;
 
@@ -52,9 +104,18 @@ function CreativeTemplate({ portfolio = {} }) {
 
   const skillList = toList(skills);
   const projectList = Array.isArray(projects) ? projects : [];
+  const filledProjects = projectList.filter(
+    (project) => project.name || project.description
+  );
 
-  // An even number of copies keeps the marquee loop seamless
-  const tickerItems = Array.from({ length: 6 }, () => displayTitle);
+  // An even number of copies keeps each marquee loop seamless
+  const titleTicker = Array.from({ length: 6 }, () => displayTitle);
+  const skillTicker =
+    skillList.length > 0
+      ? Array.from({ length: skillList.length < 6 ? 4 : 2 }).flatMap(
+          () => skillList
+        )
+      : [];
 
   const socialLinks = [
     { label: "GitHub", url: github },
@@ -66,31 +127,44 @@ function CreativeTemplate({ portfolio = {} }) {
     <div
       className={`ct-root ${darkMode ? "ct-dark" : "ct-light"}`}
       style={{ "--ct-accent": themeColor }}
+      onMouseMove={handleRootMove}
+      onMouseLeave={handleRootLeave}
     >
-      {/* BACKGROUND */}
+      {/* ANIMATED MESH BACKGROUND */}
       <div className="ct-backdrop" aria-hidden="true">
-        <span className="ct-blob ct-blob-one"></span>
-        <span className="ct-blob ct-blob-two"></span>
-        <span className="ct-blob ct-blob-three"></span>
+        <span className="ct-blob ct-blob-1"></span>
+        <span className="ct-blob ct-blob-2"></span>
+        <span className="ct-blob ct-blob-3"></span>
+        <span className="ct-blob ct-blob-4"></span>
+        <span className="ct-cursor-glow" ref={glowRef}></span>
+        <span className="ct-grain"></span>
       </div>
 
       <div className="ct-wrap">
         {/* NAV */}
-        <nav className="ct-nav">
-          <span className="ct-logo">{initials || "Y"}</span>
-          <span className="ct-nav-tag">Portfolio ✦ {new Date().getFullYear()}</span>
+        <nav className="ct-nav ct-glass">
+          <span className="ct-logo">
+            <b>{initials || "Y"}</b>
+            <span>{displayName}</span>
+          </span>
+
+          <span className="ct-nav-meta">
+            <i></i> Available for new projects
+          </span>
         </nav>
 
         {/* HERO */}
         <header className="ct-hero">
           <div className="ct-hero-text">
-            <span className="ct-sticker">✦ {displayTitle}</span>
-
             <h1 className="ct-name">
               {words.map((word, index) => (
                 <span
                   key={`${word}-${index}`}
-                  className={`ct-word ${getWordClass(index, words.length)}`}
+                  className={`ct-word ct-grad ${
+                    words.length > 1 && index === words.length - 1
+                      ? "ct-word-serif"
+                      : ""
+                  }`}
                 >
                   {word}
                 </span>
@@ -99,97 +173,142 @@ function CreativeTemplate({ portfolio = {} }) {
 
             <p className="ct-lead">
               {about
-                ? about.length > 170
-                  ? `${about.slice(0, 170).trim()}…`
+                ? about.length > 180
+                  ? `${about.slice(0, 180).trim()}…`
                   : about
                 : "Your introduction will appear here once you write your about section."}
             </p>
 
             <div className="ct-actions">
               {email && (
-                <a className="ct-btn ct-btn-solid" href={`mailto:${email}`}>
-                  Say hello <span>→</span>
+                <a
+                  className="ct-btn ct-btn-solid"
+                  href={`mailto:${email}`}
+                  onMouseMove={handleMagnet}
+                  onMouseLeave={resetMagnet}
+                >
+                  Get in touch <span>→</span>
                 </a>
               )}
               {website && (
                 <a
-                  className="ct-btn ct-btn-ghost"
+                  className="ct-btn ct-btn-glass ct-glass"
                   href={website}
                   target="_blank"
                   rel="noreferrer"
                 >
-                  My website <span>↗</span>
+                  Visit website <span>↗</span>
                 </a>
               )}
             </div>
+
+            {(filledProjects.length > 0 || skillList.length > 0 || resumeName) && (
+              <div className="ct-stats">
+                {filledProjects.length > 0 && (
+                  <div className="ct-stat ct-glass">
+                    <strong>{String(filledProjects.length).padStart(2, "0")}</strong>
+                    <span>Projects</span>
+                  </div>
+                )}
+                {skillList.length > 0 && (
+                  <div className="ct-stat ct-glass">
+                    <strong>{String(skillList.length).padStart(2, "0")}</strong>
+                    <span>Skills</span>
+                  </div>
+                )}
+                {resumeName && (
+                  <div className="ct-stat ct-glass">
+                    <strong>CV</strong>
+                    <span>Available</span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
-          <div className="ct-avatar-wrap">
-            <div className="ct-avatar-shape">
+          <div className="ct-portrait-wrap">
+            <div
+              className="ct-portrait-ring"
+              onMouseMove={handleTilt}
+              onMouseLeave={resetTilt}
+            >
               {showImage ? (
                 <img
+                  className="ct-portrait"
                   src={profileImage}
                   alt={displayName}
                   onError={() => setFailedImage(profileImage)}
                 />
               ) : (
-                <div className="ct-avatar-fallback">{initials || "Y"}</div>
+                <div className="ct-portrait ct-portrait-fallback">
+                  {initials || "Y"}
+                </div>
               )}
             </div>
 
-            <div className="ct-badge" aria-hidden="true">
-              <svg viewBox="0 0 140 140">
-                <defs>
-                  <path
-                    id="ct-badge-path"
-                    d="M70,70 m-56,0 a56,56 0 1,1 112,0 a56,56 0 1,1 -112,0"
-                  />
-                </defs>
-                <text>
-                  <textPath href="#ct-badge-path">
-                    HELLO THERE • WELCOME TO MY PORTFOLIO •{" "}
-                  </textPath>
-                </text>
-              </svg>
-              <span className="ct-badge-core">✦</span>
+            <div className="ct-chip ct-chip-top ct-glass">
+              <i></i>
+              {displayTitle}
             </div>
+
+            {filledProjects.length > 0 && (
+              <div className="ct-chip ct-chip-bottom ct-glass">
+                <strong>{String(filledProjects.length).padStart(2, "0")}</strong>
+                {filledProjects.length === 1 ? "project" : "projects"}
+              </div>
+            )}
           </div>
         </header>
       </div>
 
-      {/* TILTED MARQUEE */}
-      <div className="ct-band" aria-hidden="true">
-        <div className="ct-band-track">
-          {tickerItems.map((item, index) => (
-            <span key={index}>
-              {item}
-              <b>✦</b>
-            </span>
-          ))}
+      {/* DOUBLE MARQUEE */}
+      <div className="ct-marquee" aria-hidden="true">
+        <div className="ct-marquee-row">
+          <div className="ct-marquee-track">
+            {titleTicker.map((item, index) => (
+              <span className="ct-ticker-big" key={index}>
+                {item}
+                <b>✦</b>
+              </span>
+            ))}
+          </div>
         </div>
+
+        {skillTicker.length > 0 && (
+          <div className="ct-marquee-row">
+            <div className="ct-marquee-track ct-reverse">
+              {skillTicker.map((item, index) => (
+                <span className="ct-ticker-small" key={`${item}-${index}`}>
+                  {item}
+                  <b>●</b>
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="ct-wrap">
         {/* ABOUT */}
         <section className="ct-section">
-          <h2 className="ct-heading">
-            <span className="ct-heading-num">01</span> About me
+          <h2 className="ct-label">
+            <span>01</span> About
           </h2>
-          <p className="ct-about">
+          <p className="ct-about ct-glass">
             {about || "Your about information will appear here."}
           </p>
         </section>
 
         {/* SKILLS */}
         <section className="ct-section">
-          <h2 className="ct-heading">
-            <span className="ct-heading-num">02</span> Skills
+          <h2 className="ct-label">
+            <span>02</span> Skills
           </h2>
 
           {skillList.length > 0 ? (
             <div className="ct-skills">
               {skillList.map((skill, index) => (
-                <span className="ct-skill" key={`${skill}-${index}`}>
+                <span className="ct-skill ct-glass" key={`${skill}-${index}`}>
                   {skill}
                 </span>
               ))}
@@ -200,15 +319,20 @@ function CreativeTemplate({ portfolio = {} }) {
         </section>
 
         {/* PROJECTS */}
-        <section className="ct-section">
-          <h2 className="ct-heading">
-            <span className="ct-heading-num">03</span> Selected <em>work</em>
+        <section className="ct-section ct-section-stack">
+          <h2 className="ct-label">
+            <span>03</span> Selected work
           </h2>
 
           <div className="ct-projects">
             {projectList.map((project, index) => (
-              <article className="ct-card" key={index}>
-                <span className="ct-card-number">
+              <article
+                className="ct-card ct-glass"
+                key={index}
+                onMouseMove={handleTilt}
+                onMouseLeave={resetTilt}
+              >
+                <span className="ct-card-number ct-grad">
                   {String(index + 1).padStart(2, "0")}
                 </span>
 
@@ -241,13 +365,13 @@ function CreativeTemplate({ portfolio = {} }) {
           <section className="ct-contact">
             <span className="ct-contact-eyebrow">04 — Contact</span>
 
-            <h2 className="ct-contact-title">
-              Let's make <em>something</em> wild.
-            </h2>
+            <p className="ct-contact-title">
+              Let's build something <em>remarkable.</em>
+            </p>
 
             {email && (
               <a className="ct-contact-email" href={`mailto:${email}`}>
-                {email}
+                {email} <span>→</span>
               </a>
             )}
 
@@ -268,7 +392,7 @@ function CreativeTemplate({ portfolio = {} }) {
 
             {resumeName && (
               <p className="ct-resume">
-                Resume · <strong>{resumeName}</strong>
+                Resume — <strong>{resumeName}</strong>
               </p>
             )}
           </section>
